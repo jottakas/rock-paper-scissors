@@ -1,3 +1,6 @@
 
-export type HandShapeId = '1' | '2' | '3';
-export type HandShapeName = 'Rock' | 'Paper' | 'Scissors';
+export enum HandShapeEnum {
+    Rock = '1',
+    Paper = '2',
+    Scissors = '3',
+}

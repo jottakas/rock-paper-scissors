@@ -1,6 +1,6 @@
-import { HandShapeName, HandShapeId } from "../enums/hand-shape.enum";
+import { HandShapeEnum } from "../enums/hand-shape.enum";
 
 export interface HandShape {
-    id: HandShapeId;
-    name: HandShapeName
+    id: HandShapeEnum;
+    name: HandShapeEnum[keyof HandShapeEnum];
 }

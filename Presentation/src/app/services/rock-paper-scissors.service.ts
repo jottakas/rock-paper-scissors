@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HandShapeId } from '../shared/enums/hand-shape.enum';
+import { HandShapeEnum } from '../shared/enums/hand-shape.enum';
 import { HttpService } from './http.service';
 
 @Injectable({
@@ -20,7 +20,7 @@ export class RockPaperScissorsService extends HttpService {
    * Fights a round of the game
    * @returns Correlation id
    */
-   public fightRound(id: HandShapeId): string {
+   public fightRound(id: HandShapeEnum): string {
     return super.post('fight-round', id);
   }
 }

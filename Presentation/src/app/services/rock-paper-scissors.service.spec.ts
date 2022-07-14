@@ -1,5 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { HandShapeEnum } from '../shared/enums/hand-shape.enum';
 import { HandShape } from '../shared/interfaces/hand-shape.interface';
 import { RockPaperScissorsService } from './rock-paper-scissors.service';
 
@@ -33,15 +34,15 @@ describe('RockPaperScissorsService', () => {
   it('should retrieve the hand shapes', () => {
     const shapes: HandShape[] = [
       {
-        id: '1',
+        id: HandShapeEnum.Rock,
         name: 'Rock'
       },
       {
-        id: '2',
+        id: HandShapeEnum.Paper,
         name: 'Paper'
       },
       {
-        id: '3',
+        id: HandShapeEnum.Scissors,
         name: 'Scissors'
       }
     ]

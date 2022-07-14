@@ -13,6 +13,7 @@ describe('HttpService', () => {
 
   let getSpy: jasmine.Spy;
   let postSpy: jasmine.Spy;
+  const BASE_URL = '<empty base url>';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,23 +35,23 @@ describe('HttpService', () => {
   });
 
   describe('.get(url)', () => {
-    const mockUrl = 'mock url';
+    const mockEndpoint = 'mock url';
     it('should call the get with the correct url', () => {
-      service.get(mockUrl);
-      expect(getSpy).toHaveBeenCalledWith(mockUrl);
+      service.get(mockEndpoint);
+      expect(getSpy).toHaveBeenCalledWith(BASE_URL + '/' + mockEndpoint);
     });
 
     it('should emit the busy status as true', (fnDone) => {
       getSpy.and.returnValue(of(true).pipe(delay(500)))
 
       subscriptions.push(
-        service.evtBusy.subscribe(isBusy => {
+        service.evtBusy$.subscribe(isBusy => {
           expect(isBusy).toBeTrue();
           fnDone();
         })
       );
 
-      service.get(mockUrl);
+      service.get(mockEndpoint);
     });
 
     it('should emit the result', (fnDone) => {
@@ -60,13 +61,13 @@ describe('HttpService', () => {
       getSpy.and.returnValue(of(mockHttpResponse).pipe(delay(500)))
 
       subscriptions.push(
-        service.evtRestResponse.subscribe(restResponse => {
+        service.evtRestResponse$.subscribe(restResponse => {
           expect(restResponse).toEqual(expected);
           fnDone();
         })
       );
 
-      const requestId = service.get(mockUrl);
+      const requestId = service.get(mockEndpoint);
       expected.requestId = requestId;
     });
 
@@ -77,13 +78,13 @@ describe('HttpService', () => {
       getSpy.and.returnValue(of(false).pipe(delay(500), map(() => { throw mockHttpError })))
 
       subscriptions.push(
-        service.evtRestResponse.subscribe(restResponse => {
+        service.evtRestResponse$.subscribe(restResponse => {
           expect(restResponse).toEqual(expected);
           fnDone();
         })
       );
 
-      const requestId = service.get(mockUrl);
+      const requestId = service.get(mockEndpoint);
       expected.requestId = requestId;
     });
   })

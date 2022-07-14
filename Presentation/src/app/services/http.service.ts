@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, of, Subject, tap } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { RestResponse } from '../shared/interfaces/rest-response.interface';
 
@@ -9,29 +9,52 @@ import { RestResponse } from '../shared/interfaces/rest-response.interface';
 })
 export class HttpService {
 
+  protected readonly apiUrl: string = '<empty base url>';
+
   /** Utility for optional spinner */
-  public evtBusy: EventEmitter<boolean> = new EventEmitter();
 
   /** Emits a request response */
-  public evtRestResponse: EventEmitter<RestResponse<any>> = new EventEmitter();
+  public evtBusy$: Subject<boolean> = new Subject();
+  public evtRestResponse$: Subject<RestResponse<any>> = new Subject();
 
   /** Queue of http requests */
   private requestQueue: string[] = [];
 
   constructor(private readonly httpClient: HttpClient) { }
 
+  private buildUrl = (endpoint: string) => this.apiUrl + (endpoint.startsWith('/') ? endpoint : '/' + endpoint);
   /**
    * HTTP Get
-   * @param url request url
+   * @param endpoint endpoint of the request
    * @returns correlation id of the request 
    */
-  public get(url: string) {
+  public get(endpoint: string) {
     const requestId = uuid();
     this.requestQueue.push(requestId);
 
     this.emitBusyStatus();
 
-    this.httpClient.get(url)
+    this.httpClient.get(this.buildUrl(endpoint))
+      .pipe(
+        catchError(error => this.onErrorResponse(requestId, error))
+      )
+      .subscribe(data => this.onSuccessResponse(requestId, data));
+
+    return requestId;
+  }
+
+  /**
+   * HTTP Post
+   * @param endpoint endpoint of the request
+   * @returns correlation id of the request 
+   */
+  public post(endpoint: string, data: any) {
+    const requestId = uuid();
+    this.requestQueue.push(requestId);
+
+    this.emitBusyStatus();
+
+    this.httpClient.post(this.buildUrl(endpoint), data)
       .pipe(
         catchError(error => this.onErrorResponse(requestId, error))
       )
@@ -45,7 +68,7 @@ export class HttpService {
    */
   private emitBusyStatus = () => {
     const isLoading = this.requestQueue.length > 0;
-    this.evtBusy.emit(isLoading);
+    this.evtBusy$.next(isLoading);
   }
 
   /**
@@ -55,7 +78,7 @@ export class HttpService {
    */
   private onSuccessResponse = (requestId: string, data: any) => {
     this.requestQueue = this.requestQueue.filter(id => id !== requestId);
-    this.evtRestResponse.emit({ requestId, data })
+    this.evtRestResponse$.next({ requestId, data })
     this.emitBusyStatus();
   }
 
@@ -69,7 +92,7 @@ export class HttpService {
     const restResponse: RestResponse<any> = { requestId, error };
 
     this.requestQueue = this.requestQueue.filter(id => id !== requestId);
-    this.evtRestResponse.emit({ requestId, error })
+    this.evtRestResponse$.next({ requestId, error })
     this.emitBusyStatus();
 
     return of(restResponse);

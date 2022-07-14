@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { HandShapeEnum } from 'src/app/shared/enums/hand-shape.enum';
 import { HandShape } from 'src/app/shared/interfaces/hand-shape.interface';
 
@@ -9,8 +10,8 @@ describe('HandShapeComponent', () => {
   let fixture: ComponentFixture<HandShapeComponent>;
 
   const mockHandShape: HandShape = {
-    id: HandShapeEnum.Paper,
-    name: 'Paper'
+    id: HandShapeEnum.Rock,
+    name: 'Rock'
   }
 
   beforeEach(async () => {
@@ -27,5 +28,10 @@ describe('HandShapeComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should display the rock shape', () => {
+    const html = fixture.debugElement.query(By.css('i'))
+    expect(html.classes['fa-guitar']).toBeTrue;
   });
 });

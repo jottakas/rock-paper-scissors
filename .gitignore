@@ -5,6 +5,9 @@ target/
 !**/src/test/**/target/
 *mvnw*
 *maven*
+**/node_modules/**
+**/.angular/**
+**/dist/**
 
 ### STS ###
 .apt_generated

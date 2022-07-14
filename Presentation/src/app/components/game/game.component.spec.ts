@@ -15,9 +15,13 @@ describe('GameComponent', () => {
   let fixture: ComponentFixture<GameComponent>;
 
   let gameServiceSpy: jasmine.SpyObj<GameService>;
+  const getHandShapesMockId = 'get hand shapes mock id';
+  const fightRoundMockId = 'fight round mock id';
 
   beforeEach(async () => {
-    gameServiceSpy = jasmine.createSpyObj('Game Service', ['getHandShapes'], { 'evtRestResponse$': new Subject() });
+    gameServiceSpy = jasmine.createSpyObj('Game Service', ['getHandShapes', 'fightRound'], { 'evtRestResponse$': new Subject() });
+    gameServiceSpy.getHandShapes.and.returnValue(getHandShapesMockId)
+    gameServiceSpy.fightRound.and.returnValue(fightRoundMockId)
 
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -60,15 +64,31 @@ describe('GameComponent', () => {
         });
 
         // Act
-        gameServiceSpy.evtRestResponse$.next({ requestId: 'mock id', data: mockShapes });
+        gameServiceSpy.evtRestResponse$.next({ requestId: getHandShapesMockId, data: mockShapes });
       })
     })
-  })
 
-  xdescribe('User actions', () => {
-    describe('should display', () => {
-      it('Rock button', () => {
-        const buttons = fixture.debugElement.queryAll(By.css('#user-actions button'))
+    describe('Fight round', () => {
+      it('should send the selected shape to fight the round', () => {
+        const selectedShape = HAND_SHAPES.Rock;
+        component.fightRound(selectedShape);
+        expect(gameServiceSpy.fightRound).toHaveBeenCalledWith(selectedShape);
+      })
+      it('should display the win', () => {
+        component.fightRound(HAND_SHAPES.Rock);
+        gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: true });
+        fixture.detectChanges();
+
+        const container = fixture.debugElement.query(By.css('#fight-round-result'));
+        expect((container.nativeElement as HTMLElement).textContent?.toLowerCase()).toContain('win')
+      })
+      it('should display the loss', () => {
+        component.fightRound(HAND_SHAPES.Rock);
+        gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: false });
+        fixture.detectChanges();
+
+        const container = fixture.debugElement.query(By.css('#fight-round-result'));
+        expect((container.nativeElement as HTMLElement).textContent?.toLowerCase()).toContain('loss')
       })
     })
   })

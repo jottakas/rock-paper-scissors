@@ -1,9 +1,15 @@
-<ng-container *ngIf="handShapes$|async as handShapes">
-  <div *ngFor="let handShape of handShapes">
-    <app-hand-shape [handShape]="handShape"></app-hand-shape>
-  </div>
-</ng-container>
+<div *ngFor="let handShape of handShapes$|async"
+  id="user-hand-shapes">
+  <app-hand-shape [handShape]="handShape"></app-hand-shape>
+</div>
 
-<div *ngIf="errors$|async">
+
+<div id="fight-round-result">
+  {{(fightRoundResult$|async) ? 'Win' : 'Loss'}}
+</div>
+
+
+<div *ngIf="errors$|async"
+  id="server-errors">
   There was an unexpected server error :(
 </div>

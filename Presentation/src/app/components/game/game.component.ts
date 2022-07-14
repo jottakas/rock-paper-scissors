@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, map, Observable } from 'rxjs';
-import { HandShape } from 'src/app/shared/interfaces/hand-shape.interface';
+import { filter, map } from 'rxjs';
 import { GameService } from '../../services/game.service';
+import { HAND_SHAPES } from '../../shared/enums/hand-shapes.enum';
 import { utils } from '../../shared/util/utils';
 
 @Component({
@@ -12,9 +12,14 @@ import { utils } from '../../shared/util/utils';
 })
 export class GameComponent implements OnInit {
 
-  handShapes$: Observable<HandShape[]> = this.gameService.evtRestResponse$.pipe(
-    filter(response => response && response.data),
+  handShapes$ = this.gameService.evtRestResponse$.pipe(
+    filter(response => response.requestId === this.getHandShapesRequestId),
     map(response => response.data)
+  )
+
+  fightRoundResult$ = this.gameService.evtRestResponse$.pipe(
+    filter(response => response.requestId === this.fightRoundRequestId),
+    map(response => response.data),
   )
 
   errors$ = this.gameService.evtRestResponse$.pipe(
@@ -22,10 +27,17 @@ export class GameComponent implements OnInit {
     map(response => utils.isNotNullNorUndefined(response.error))
   )
 
+  private getHandShapesRequestId = '';
+  private fightRoundRequestId = '';
+
   constructor(private readonly gameService: GameService) { }
 
   ngOnInit(): void {
-    this.gameService.getHandShapes();
+    this.getHandShapesRequestId = this.gameService.getHandShapes();
+  }
+
+  fightRound(shapeId: HAND_SHAPES) {
+    this.fightRoundRequestId = this.gameService.fightRound(shapeId);
   }
 
 }

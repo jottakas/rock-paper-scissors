@@ -1,7 +1,11 @@
-
 <ng-container [ngSwitch]="handShape.id">
-    <div *ngSwitchCase="1">
-        <i class="fa-solid fa-guitar"></i>
-        ddd
+    <div *ngSwitchCase="HAND_SHAPES.Rock">
+        <i class="fa-solid fa-hand-back-fist"></i>
+    </div>
+    <div *ngSwitchCase="HAND_SHAPES.Paper">
+        <i class="fa-solid fa-hand"></i>
+    </div>
+    <div *ngSwitchCase="HAND_SHAPES.Scissors">
+        <i class="fa-solid fa-hand-scissors"></i>
     </div>
 </ng-container>

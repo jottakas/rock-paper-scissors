@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { catchError, of, Subject, tap } from 'rxjs';
+import { catchError, map, of, Subject, tap } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { RestResponse } from '../shared/interfaces/rest-response.interface';
 
@@ -26,7 +26,7 @@ export class HttpService {
   /**
    * HTTP Get
    * @param endpoint endpoint of the request
-   * @returns correlation id of the request 
+   * @returns correlation id of the request
    */
   public get(endpoint: string) {
     const requestId = uuid();
@@ -36,9 +36,10 @@ export class HttpService {
 
     this.httpClient.get(this.buildUrl(endpoint))
       .pipe(
+        map(data => this.onSuccessResponse(requestId, data)),
         catchError(error => this.onErrorResponse(requestId, error))
       )
-      .subscribe(data => this.onSuccessResponse(requestId, data));
+      .subscribe();
 
     return requestId;
   }
@@ -46,7 +47,7 @@ export class HttpService {
   /**
    * HTTP Post
    * @param endpoint endpoint of the request
-   * @returns correlation id of the request 
+   * @returns correlation id of the request
    */
   public post(endpoint: string, data: any) {
     const requestId = uuid();
@@ -56,9 +57,10 @@ export class HttpService {
 
     this.httpClient.post(this.buildUrl(endpoint), data)
       .pipe(
+        map(data => this.onSuccessResponse(requestId, data)),
         catchError(error => this.onErrorResponse(requestId, error))
       )
-      .subscribe(data => this.onSuccessResponse(requestId, data));
+      .subscribe();
 
     return requestId;
   }
@@ -74,7 +76,7 @@ export class HttpService {
   /**
    * Emits the response data
    * @param requestId Correlation id
-   * @param data 
+   * @param data
    */
   private onSuccessResponse = (requestId: string, data: any) => {
     this.requestQueue = this.requestQueue.filter(id => id !== requestId);

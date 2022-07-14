@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HandShapeEnum } from '../shared/enums/hand-shape.enum';
+import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
 import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RockPaperScissorsService extends HttpService {
+export class GameService extends HttpService {
   protected override readonly apiUrl = 'rock-paper-scissors';
 
   /**
@@ -20,7 +20,7 @@ export class RockPaperScissorsService extends HttpService {
    * Fights a round of the game
    * @returns Correlation id
    */
-   public fightRound(id: HandShapeEnum): string {
+   public fightRound(id: HAND_SHAPES): string {
     return super.post('fight-round', id);
   }
 }

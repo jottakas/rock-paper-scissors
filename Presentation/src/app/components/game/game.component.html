@@ -1,1 +1,9 @@
-<app-hand-shape [handShape]="handShape">
+<ng-container *ngIf="handShapes$|async as handShapes">
+  <div *ngFor="let handShape of handShapes">
+    <app-hand-shape [handShape]="handShape"></app-hand-shape>
+  </div>
+</ng-container>
+
+<div *ngIf="errors$|async">
+  There was an unexpected server error :(
+</div>

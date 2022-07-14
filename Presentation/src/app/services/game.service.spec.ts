@@ -1,11 +1,11 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { HandShapeEnum } from '../shared/enums/hand-shape.enum';
+import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
 import { HandShape } from '../shared/interfaces/hand-shape.interface';
-import { RockPaperScissorsService } from './rock-paper-scissors.service';
+import { GameService } from './game.service';
 
 describe('RockPaperScissorsService', () => {
-  let service: RockPaperScissorsService;
+  let service: GameService;
   let httpMock: HttpTestingController;
 
   let nextSpy: jasmine.Spy;
@@ -18,7 +18,7 @@ describe('RockPaperScissorsService', () => {
     });
 
     httpMock = TestBed.inject(HttpTestingController);
-    service = TestBed.inject(RockPaperScissorsService);
+    service = TestBed.inject(GameService);
 
     nextSpy = spyOn(service.evtRestResponse$, 'next')
   });
@@ -34,15 +34,15 @@ describe('RockPaperScissorsService', () => {
   it('should retrieve the hand shapes', () => {
     const shapes: HandShape[] = [
       {
-        id: HandShapeEnum.Rock,
+        id: HAND_SHAPES.Rock,
         name: 'Rock'
       },
       {
-        id: HandShapeEnum.Paper,
+        id: HAND_SHAPES.Paper,
         name: 'Paper'
       },
       {
-        id: HandShapeEnum.Scissors,
+        id: HAND_SHAPES.Scissors,
         name: 'Scissors'
       }
     ]

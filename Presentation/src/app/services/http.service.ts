@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/htt
 import { EventEmitter, Injectable } from '@angular/core';
 import { catchError, map, of, Subject, tap } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+import { environment } from '../../environments/environment';
 import { RestResponse } from '../shared/interfaces/rest-response.interface';
 
 @Injectable({
@@ -22,7 +23,10 @@ export class HttpService {
 
   constructor(private readonly httpClient: HttpClient) { }
 
-  private buildUrl = (endpoint: string) => this.apiUrl + (endpoint.startsWith('/') ? endpoint : '/' + endpoint);
+
+  private prependSlash = (value: string) => (value.startsWith('/') ? value : '/' + value);
+  private buildUrl = (endpoint: string) => environment.baseUrl + this.prependSlash(this.apiUrl) + this.prependSlash(endpoint)
+
   /**
    * HTTP Get
    * @param endpoint endpoint of the request

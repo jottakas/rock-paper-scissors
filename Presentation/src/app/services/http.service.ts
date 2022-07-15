@@ -58,7 +58,7 @@ export class HttpService {
    * @param data data to send on the body of the post request
    * @returns correlation id of the request
    */
-  public post(endpoint: string, data: any) {
+  public post(endpoint: string, data?: any) {
     const requestId = uuid();
     this.requestQueue.push(requestId);
 

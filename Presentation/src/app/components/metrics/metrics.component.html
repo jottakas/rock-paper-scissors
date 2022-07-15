@@ -1,0 +1,49 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Stats</th>
+      <th scope="col">Win rate</th>
+      <th scope="col">Loss rate</th>
+      <th scope="col">Tie rate</th>
+      <th scope="col">Rounds played</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <div>&nbsp;</div>
+        <div>Rounds</div>
+      </td>
+      <td>
+        <div>
+          {{matchMetrics.victoryRate|percent}}
+        </div>
+        <div>
+          {{matchMetrics.victories}}/{{matchMetrics.roundsPlayed}}
+        </div>
+      </td>
+      <td>
+        <div>
+          {{matchMetrics.lossRate|percent}}
+        </div>
+        <div>
+          {{matchMetrics.losses}}/{{matchMetrics.roundsPlayed}}
+        </div>
+      </td>
+      <td>
+        <div>
+          {{matchMetrics.tieRate|percent}}
+        </div>
+        <div>
+          {{matchMetrics.ties}}/{{matchMetrics.roundsPlayed}}
+        </div>
+      </td>
+      <td>
+        <div>&nbsp;</div>
+        <div>
+          {{matchMetrics.roundsPlayed}}
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

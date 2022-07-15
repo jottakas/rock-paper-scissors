@@ -12,8 +12,16 @@ export class GameService extends HttpService {
    * Gets the hand shapes
    * @returns Correlation id
    */
-   public getHandShapes(): string {
+  public getHandShapes(): string {
     return super.get('hand-shapes');
+  }
+
+  /**
+   * Gets the hand shapes
+   * @returns Correlation id
+   */
+  public createMatch(): string {
+    return super.post('create-match');
   }
 
   /**
@@ -21,7 +29,7 @@ export class GameService extends HttpService {
    * @param userShapeId user selection
    * @returns Correlation id
    */
-   public fightRound(userShapeId: HAND_SHAPES): string {
-    return super.post('fight-round', userShapeId);
+  public fightRound(matchId: number, userShapeId: HAND_SHAPES): string {
+    return super.post(`${matchId}/fight-round`, userShapeId);
   }
 }

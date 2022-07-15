@@ -1,13 +1,13 @@
 <h1>Rock Paper Scissors</h1>
 
-<div class="row">
+<div class="row" *ngIf="matchId$|async as matchId">
   <div class="col-12">
     <h2>Select an action</h2>
     <div *ngFor="let handShape of handShapes$|async"
       id="user-hand-shapes"
       class="d-inline-block mr-3">
       <app-hand-shape [handShape]="handShape"
-        (evtClick)="fightRound($event)"></app-hand-shape>
+        (evtClick)="fightRound(matchId, $event)"></app-hand-shape>
     </div>
   </div>
 </div>
@@ -48,8 +48,8 @@
 </div>
 
 <div id="fight-round-result"
-  class="h2 p-3 border border-light">
-  <span class="p-1">
+  class="h2 pt-3 pr-3 pb-3 border border-light">
+  <span class="pt-1 pb-1">
     Outcome:
   </span>
   <span *ngIf="fightRoundResult$|async as fightRoundResult; else outcomePending"
@@ -62,6 +62,10 @@
   <ng-template #outcomePending>
     <span class="outcome p-1 pl-3 pr-3">-</span>
   </ng-template>
+</div>
+
+<div class="h2 pt-3 pr-3 pb-3 border border-light">
+  <button class="btn btn-primary" (click)="askCreateMatch()">New match (reset stats)</button>
 </div>
 
 <div *ngIf="errors$|async"

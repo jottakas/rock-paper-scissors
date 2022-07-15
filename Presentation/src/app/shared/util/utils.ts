@@ -1,4 +1,5 @@
 import { Subscription } from "rxjs";
+import { RestResponse } from '../interfaces/rest-response.interface';
 
 type NullUndefined = null | undefined;
 type NonEmptyArray<T> = [T, ...T[]];
@@ -12,5 +13,7 @@ const unsubscribe = (subscriptions: Subscription[]) => {
 export const utils = {
     isNotNullNorUndefined,
     isArrayNotEmpty,
-    unsubscribe
+    unsubscribe,
+    isResponseWithData: (response: RestResponse<any>) => isNotNullNorUndefined(response) && isNotNullNorUndefined(response.data),
+    mapResponseData: (response: RestResponse<any>) =>response.data,
 }

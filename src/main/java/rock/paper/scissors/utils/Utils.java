@@ -1,6 +1,6 @@
 package rock.paper.scissors.utils;
 
-import java.util.List;
+import java.util.Collection;
 
 public class Utils {
   /**
@@ -15,12 +15,12 @@ public class Utils {
   }
 
   /**
-   * Checks if a list is not null and not empty
+   * Checks if a collection is not null and not empty
    *
    * @param list list to check
    * @return true if a list is not null and not empty
    */
-  public static <T> boolean isListNotEmpty(List<T> list) {
+  public static <T> boolean isCollectionNotEmpty(Collection<T> list) {
     return list != null && !list.isEmpty();
   }
 }

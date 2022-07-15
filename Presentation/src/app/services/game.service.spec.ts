@@ -59,11 +59,12 @@ describe('GameService', () => {
   });
 
   it('should return the result of the match', () => {
-    const requestId = service.fightRound({} as any);
+    const mockMatchId = 1;
+    const requestId = service.fightRound(mockMatchId, {} as any);
     const mockResponse = { computerShapeId: '1', isUserWin: true }
     const expected = { requestId, data: mockResponse }
 
-    const url = testUtils.buildUrl(API_URL, 'fight-round');
+    const url = testUtils.buildUrl(API_URL, `${mockMatchId}/fight-round`);
     const req = httpMock.expectOne(url);
     req.flush(mockResponse);
 

@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, map, Subscription } from 'rxjs';
 import { GameService } from '../../services/game.service';
 import { MetricsService } from '../../services/metrics.service';
+import { Match } from '../../shared/interfaces/match.interface';
 import { utils } from '../../shared/util/utils';
 
 @Component({
@@ -26,7 +27,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.cleanupSubscriptions = [
       this.gameService.evtRestResponse$.subscribe(() => {
         this.metricsService.getMatches();
-      })
+      }),
+      this.matches$.subscribe(this.processMatches)
     ]
   }
 
@@ -34,4 +36,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     utils.unsubscribe(this.cleanupSubscriptions);
   }
 
+  private processMatches = (matches: Match[]) => {
+
+  }
 }

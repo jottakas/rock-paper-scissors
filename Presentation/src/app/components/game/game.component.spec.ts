@@ -17,11 +17,13 @@ describe('GameComponent', () => {
 
   let gameServiceSpy: jasmine.SpyObj<GameService>;
   const getHandShapesMockId = 'get hand shapes mock id';
+  const createMatchMockId = 'create match mock id';
   const fightRoundMockId = 'fight round mock id';
 
   beforeEach(async () => {
-    gameServiceSpy = jasmine.createSpyObj('Game Service', ['getHandShapes', 'fightRound'], { 'evtRestResponse$': new Subject() });
+    gameServiceSpy = jasmine.createSpyObj('Game Service', ['getHandShapes', 'createMatch', 'fightRound'], { 'evtRestResponse$': new Subject() });
     gameServiceSpy.getHandShapes.and.returnValue(getHandShapesMockId)
+    gameServiceSpy.createMatch.and.returnValue(createMatchMockId)
     gameServiceSpy.fightRound.and.returnValue(fightRoundMockId)
 
     await TestBed.configureTestingModule({
@@ -46,7 +48,30 @@ describe('GameComponent', () => {
   });
 
   describe('Methods', () => {
+    describe('Match creation', () => {
+      it('should retrieve the match id', () => {
+        expect(gameServiceSpy.createMatch).toHaveBeenCalled();
+      })
+      it('should assign the data to the match id property', (fnDone) => {
+        // Arrange
+        const mockMatchId = 1;
+
+        // Assert
+        component.matchId$.subscribe(result => {
+          expect(result).toEqual(mockMatchId);
+          fnDone();
+        });
+
+        // Act
+        gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, data: mockMatchId });
+      })
+    })
+
     describe('Hand shape retrieval', () => {
+
+      beforeEach(() => {
+        gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, data: 1 });
+      });
 
       it('should retrieve the data', () => {
         expect(gameServiceSpy.getHandShapes).toHaveBeenCalled();
@@ -71,9 +96,10 @@ describe('GameComponent', () => {
 
     describe('Fight round', () => {
       it('should send the selected shape to fight the round', () => {
+        const matchId = 1;
         const selectedShape = { id: HAND_SHAPES.Rock, name: 'Rock' };
-        component.fightRound(selectedShape);
-        expect(gameServiceSpy.fightRound).toHaveBeenCalledWith(selectedShape.id);
+        component.fightRound(matchId, selectedShape);
+        expect(gameServiceSpy.fightRound).toHaveBeenCalledWith(matchId, selectedShape.id);
       })
 
       describe('Display result', () => {
@@ -83,8 +109,9 @@ describe('GameComponent', () => {
         };
         it('should display the tie', () => {
           const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: true, isUserVictory: false }
+          const matchId = 1;
 
-          component.fightRound({ id: HAND_SHAPES.Rock, name: 'Rock' });
+          component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
           fixture.detectChanges();
 
@@ -93,8 +120,9 @@ describe('GameComponent', () => {
         })
         it('should display the victory', () => {
           const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: true }
+          const matchId = 1;
 
-          component.fightRound({ id: HAND_SHAPES.Rock, name: 'Rock' });
+          component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
           fixture.detectChanges();
 
@@ -103,8 +131,9 @@ describe('GameComponent', () => {
         })
         it('should display the loss', () => {
           const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: false }
+          const matchId = 1;
 
-          component.fightRound({ id: HAND_SHAPES.Rock, name: 'Rock' });
+          component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
           fixture.detectChanges();
 
@@ -114,25 +143,27 @@ describe('GameComponent', () => {
 
         it('should display the user shape', () => {
           const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
+          const matchId = 1;
 
-          component.fightRound({ id: HAND_SHAPES.Rock, name: 'Rock' });
+          component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
           fixture.detectChanges();
 
           const icon = fixture.debugElement.query(By.css('#user-selected-shape i'))
-          const iconClass =(icon.nativeElement as HTMLElement).className;
+          const iconClass = (icon.nativeElement as HTMLElement).className;
           const rockClass = 'fa-hand-back-fist';
           expect(iconClass).toContain(rockClass)
         })
         it('should display the CPU shape', () => {
           const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
+          const matchId = 1;
 
-          component.fightRound({ id: HAND_SHAPES.Rock, name: 'Rock' });
+          component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
           fixture.detectChanges();
 
           const icon = fixture.debugElement.query(By.css('#user-selected-shape i'))
-          const iconClass =(icon.nativeElement as HTMLElement).className;
+          const iconClass = (icon.nativeElement as HTMLElement).className;
           const paperClass = 'fa-hand';
           expect(iconClass).toContain(paperClass)
         })

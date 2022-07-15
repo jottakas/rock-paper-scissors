@@ -13,9 +13,8 @@ export class HttpService {
   protected readonly apiUrl: string = '<empty base url>';
 
   /** Utility for optional spinner */
-
-  /** Emits a request response */
   public evtBusy$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  /** Emits a request response */
   public evtRestResponse$: BehaviorSubject<RestResponse<any>> = new BehaviorSubject({ requestId: 'init' });
 
   /** Queue of http requests */

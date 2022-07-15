@@ -28,7 +28,9 @@ The root folder is a Spring Boot application so it's ran by pressing F5 from the
 #### Run Angular
 The folder "Presentation" includes the source code for the Angular project. To run it, you need to install node
 
-Then it's as easy as running "npm start" from the CMD.
+Then install the dependencies running the command "npm i" from the CMD.
+
+Finally, after it's installed run "npm start".
 
 To run tests you can run "npm test".
 

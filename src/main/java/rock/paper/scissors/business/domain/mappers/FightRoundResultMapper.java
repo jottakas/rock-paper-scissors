@@ -18,7 +18,8 @@ public class FightRoundResultMapper extends EntityToDtoMapper<FightRoundResult, 
     result.setUserShapeId(entity.getUserHandShapeId());
     result.setCpuShapeId(entity.getCpuHandShapeId());
     result.setRoundNumber(entity.getRoundNumber());
-    result.setResultDto(new BaseDto(entity.getDdFightRoundResult().getId()));
+    result.setDate(entity.getDate());
+    result.setResultDto(new BaseDto(entity.getDdFightRoundResult().getId(), entity.getDdFightRoundResult().getName()));
 
     return result;
   }

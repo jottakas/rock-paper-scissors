@@ -1,5 +1,7 @@
 package rock.paper.scissors.business.domain;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FightRoundResultDto {
@@ -16,6 +18,9 @@ public class FightRoundResultDto {
 
   /** Which round it is */
   private int roundNumber;
+
+  /** When was the round played */
+  private Date date;
 
   /** Represents the state: Victory 1 Loss 2 Tie 3 */
   private BaseDto resultDto;
@@ -68,5 +73,11 @@ public class FightRoundResultDto {
     this.resultDto = resultDto;
   }
 
+  public Date getDate() {
+    return date;
+  }
 
+  public void setDate(Date date) {
+    this.date = date;
+  }
 }

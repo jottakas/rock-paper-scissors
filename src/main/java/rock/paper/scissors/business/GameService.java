@@ -1,15 +1,15 @@
 package rock.paper.scissors.business;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 
-import rock.paper.scissors.business.domain.FightRoundResultDtoBuilder;
 import rock.paper.scissors.business.domain.FightRoundResultDto;
+import rock.paper.scissors.business.domain.FightRoundResultDtoBuilder;
 import rock.paper.scissors.business.domain.handShapes.HandShapeDto;
-import rock.paper.scissors.business.domain.mappers.HandShapeMapper;
 import rock.paper.scissors.business.domain.mappers.MapperCache;
 import rock.paper.scissors.data.DdFightRoundResultRepository;
 import rock.paper.scissors.data.FightRoundResultRepository;
@@ -71,7 +71,7 @@ public class GameService {
     HandShapeDto cpuDto = MapperCache.handShapeMapper.mapFrom(cpuHandShape);
     FightRoundResultDto result = processFightRoundResult(userShapeId, cpuDto.getId());
 
-    saveFightResult(matchId, userShapeId, cpuDto.getId(), result);
+    saveMetric(matchId, userShapeId, cpuDto.getId(), result);
 
     return result;
   }
@@ -102,12 +102,13 @@ public class GameService {
   /**
    * Saves the fight result for metric purpouses
    */
-  private void saveFightResult(long matchId, String userHandShapeId, String cpuHandShapeId,
+  private void saveMetric(long matchId, String userHandShapeId, String cpuHandShapeId,
       FightRoundResultDto fightResultDto) {
 
     FightRoundResult fightResult = new FightRoundResult();
     fightResult.setUserHandShapeId(userHandShapeId);
     fightResult.setCpuHandShapeId(cpuHandShapeId);
+    fightResult.setDate(new Date());
 
     Match match = matchRepository.findById(matchId).orElseThrow();
     fightResult.setMatch(match);

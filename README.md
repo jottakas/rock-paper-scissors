@@ -7,7 +7,7 @@ Created thanks to the tutorials of Baeldung
 https://www.baeldung.com/spring-boot-angular-web
 
 
-##How to build
+## How to build
 The frontend and backend are not a single build and must be started separatedly.
 
 Developed using VS Code with the extensions "Spring Tools" and "Extension Pack for Java"

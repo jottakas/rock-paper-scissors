@@ -20,15 +20,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     map(utils.mapResponseData)
   );
 
-  public matchMetrics: MatchMetrics = {
-    victories: 0,
-    losses: 0,
-    ties: 0,
-    victoryRate: 0,
-    lossRate: 0,
-    tieRate: 0,
-    roundsPlayed: 0
-  };
+  public matchMetrics: MatchMetrics = this.initMatchMetrics();
 
   /** Store the subscriptions to cleanup on destroy */
   private cleanupSubscriptions: Subscription[] = [];
@@ -49,6 +41,18 @@ export class MetricsComponent implements OnInit, OnDestroy {
     utils.unsubscribe(this.cleanupSubscriptions);
   }
 
+  private initMatchMetrics() {
+    return {
+      victories: 0,
+      losses: 0,
+      ties: 0,
+      victoryRate: 0,
+      lossRate: 0,
+      tieRate: 0,
+      roundsPlayed: 0
+    }
+  };
+
   /**
    * Processes the matches to create the latest match metrics
    * @param matches List of all the matches
@@ -58,8 +62,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
     const currentMatch = matches.find(m => m.id === maxMatchId)!;
 
     const { rounds } = currentMatch;
-
     const roundsPlayed = rounds.length;
+
+    this.matchMetrics = this.initMatchMetrics();
 
     if (roundsPlayed > 0) {
       const victoryRounds = rounds.filter(r => r.resultDto?.id === DD_FIGHT_ROUND_RESULT.Victory);

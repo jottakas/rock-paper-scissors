@@ -58,9 +58,22 @@ export class GameComponent implements OnInit {
   constructor(private readonly gameService: GameService) { }
 
   ngOnInit(): void {
-    this.createMatchRequestId = this.gameService.createMatch();
+    this.createMatch();
   }
 
+  /**
+   * Asks the user if he wants to create a new match
+   */
+  askCreateMatch() {
+    const isCreateMatch = confirm('Do you want to start another match? You will not see the current stats anymore although they are still in the database')
+    if (isCreateMatch)
+      this.createMatch();
+  }
+
+  /** Creates a new match */
+  private createMatch = () => {
+    this.createMatchRequestId = this.gameService.createMatch();
+  }
   /**
    * Send the user selection to fight the cpu
    * @param handShape user selection

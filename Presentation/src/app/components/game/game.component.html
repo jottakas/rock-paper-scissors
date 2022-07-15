@@ -64,6 +64,10 @@
   </ng-template>
 </div>
 
+<div class="h2 pt-3 pr-3 pb-3 border border-light">
+  <button class="btn btn-primary" (click)="askCreateMatch()">New match (reset stats)</button>
+</div>
+
 <div *ngIf="errors$|async"
   id="server-errors">
   There was an unexpected server error :(

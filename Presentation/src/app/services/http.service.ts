@@ -16,15 +16,19 @@ export class HttpService {
 
   /** Emits a request response */
   public evtBusy$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public evtRestResponse$: BehaviorSubject<RestResponse<any>> = new BehaviorSubject({requestId: 'init'});
+  public evtRestResponse$: BehaviorSubject<RestResponse<any>> = new BehaviorSubject({ requestId: 'init' });
 
   /** Queue of http requests */
   private requestQueue: string[] = [];
 
   constructor(private readonly httpClient: HttpClient) { }
 
-
+  /** If the string doesn't start with a slash, add it */
   private prependSlash = (value: string) => (value.startsWith('/') ? value : '/' + value);
+  /** Builds an url joining the
+   *   base url (localhost:8080)
+   * + the controller api (controller)
+   * + the desired endpoint (action)*/
   private buildUrl = (endpoint: string) => environment.baseUrl + this.prependSlash(this.apiUrl) + this.prependSlash(endpoint)
 
   /**
@@ -51,6 +55,7 @@ export class HttpService {
   /**
    * HTTP Post
    * @param endpoint endpoint of the request
+   * @param data data to send on the body of the post request
    * @returns correlation id of the request
    */
   public post(endpoint: string, data: any) {

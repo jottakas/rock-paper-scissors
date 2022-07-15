@@ -23,6 +23,12 @@ public class GameService {
     this.handShapeRepository = handShapeRepository;
   }
 
+  /**
+   * Retrieves the list of possible shapes to use in the game: rock, paper or
+   * scissors
+   *
+   * @return valid shapes
+   */
   public List<HandShapeDto> getHandShapes() {
     List<HandShape> entities = (List<HandShape>) handShapeRepository.findAll();
     return HandShapeMapper.mapListFrom(entities);

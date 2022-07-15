@@ -18,9 +18,10 @@ export class GameService extends HttpService {
 
   /**
    * Fights a round of the game
+   * @param userShapeId user selection
    * @returns Correlation id
    */
-   public fightRound(id: HAND_SHAPES): string {
-    return super.post('fight-round', id);
+   public fightRound(userShapeId: HAND_SHAPES): string {
+    return super.post('fight-round', userShapeId);
   }
 }

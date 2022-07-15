@@ -33,7 +33,7 @@ public class GameController {
      * Retrieves the list of possible shapes to use in the game: rock, paper or
      * scissors
      *
-     * @return
+     * @return valid shapes
      */
     @GetMapping("/hand-shapes")
     public List<HandShapeDto> getHandShapes() {

@@ -5,6 +5,7 @@ import { cold, hot } from 'jasmine-marbles';
 import { Subject } from 'rxjs';
 import { GameService } from '../../services/game.service';
 import { HAND_SHAPES } from '../../shared/enums/hand-shapes.enum';
+import { FightRoundResult } from '../../shared/interfaces/fight-round-result.interface';
 import { HandShape } from '../../shared/interfaces/hand-shape.interface';
 
 import { GameComponent } from './game.component';
@@ -74,22 +75,43 @@ describe('GameComponent', () => {
         component.fightRound(selectedShape);
         expect(gameServiceSpy.fightRound).toHaveBeenCalledWith(selectedShape);
       })
-      it('should display the win', () => {
-        component.fightRound(HAND_SHAPES.Rock);
-        gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: true });
-        fixture.detectChanges();
 
-        const container = fixture.debugElement.query(By.css('#fight-round-result'));
-        expect((container.nativeElement as HTMLElement).textContent?.toLowerCase()).toContain('win')
-      })
-      it('should display the loss', () => {
-        component.fightRound(HAND_SHAPES.Rock);
-        gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: false });
-        fixture.detectChanges();
+      describe('Display result', () => {
+        const getResultContent = () => {
+          const container = fixture.debugElement.query(By.css('#fight-round-result'))
+          return (container.nativeElement as HTMLElement).textContent?.toLowerCase();
+        };
+        it('should display the tie', () => {
+          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: true, isUserVictory: false }
 
-        const container = fixture.debugElement.query(By.css('#fight-round-result'));
-        expect((container.nativeElement as HTMLElement).textContent?.toLowerCase()).toContain('loss')
-      })
+          component.fightRound(HAND_SHAPES.Rock);
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          fixture.detectChanges();
+
+          const result = getResultContent();
+          expect(result).toContain('tie')
+        })
+        it('should display the victory', () => {
+          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: true }
+
+          component.fightRound(HAND_SHAPES.Rock);
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          fixture.detectChanges();
+
+          const result = getResultContent();
+          expect(result).toContain('victory')
+        })
+        it('should display the loss', () => {
+          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: false }
+
+          component.fightRound(HAND_SHAPES.Rock);
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          fixture.detectChanges();
+
+          const result = getResultContent();
+          expect(result).toContain('loss')
+        })
+      });
     })
   })
 });

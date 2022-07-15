@@ -5,6 +5,8 @@ import { delay, map, of, Subscription, throwError } from 'rxjs';
 import { RestResponse } from '../shared/interfaces/rest-response.interface';
 import { HttpService } from './http.service';
 import { utils } from '../shared/util/utils';
+import { environment } from '../../environments/environment';
+import { testUtils } from '../shared/util/test-utils';
 
 describe('HttpService', () => {
   let service: HttpService;
@@ -38,7 +40,8 @@ describe('HttpService', () => {
     const mockEndpoint = 'mock url';
     it('should call the get with the correct url', () => {
       service.get(mockEndpoint);
-      expect(getSpy).toHaveBeenCalledWith(BASE_URL + '/' + mockEndpoint);
+      const expected = testUtils.buildUrl(BASE_URL, mockEndpoint)
+      expect(getSpy).toHaveBeenCalledWith(expected);
     });
 
     it('should emit the busy status as true', (fnDone) => {

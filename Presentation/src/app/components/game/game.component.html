@@ -1,31 +1,34 @@
 <div class="row">
-
   <div class="col-12 col-md-6">
     <h2>Select an action</h2>
-    <div *ngFor="let handShape of handShapes$|async" id="user-hand-shapes">
-      <app-hand-shape [handShape]="handShape" (evtClick)="fightRound($event)"></app-hand-shape>
+    <div *ngFor="let handShape of handShapes$|async"
+      id="user-hand-shapes">
+      <app-hand-shape [handShape]="handShape"
+        (evtClick)="fightRound($event)"></app-hand-shape>
     </div>
   </div>
   <div class="col-12 col-md-6">
     <div id="cpu-hand-shape">
-      <ng-template *ngIf="!cpuHandShape then waitingForUser; else cpuResult">
-      </ng-template>
+      <ng-template *ngIf="!cpuHandShape then waitingForUser; else cpuResult"></ng-template>
       <ng-template #waitingForUser>
         <h2>CPU: Waiting for user action</h2>
-        <app-hand-shape [handShape]="undefined" ></app-hand-shape>
+        <app-hand-shape [handShape]="undefined"></app-hand-shape>
       </ng-template>
       <ng-template #cpuResult>
         <h2>CPU Result: </h2>
-        <app-hand-shape [handShape]="cpuHandShape!" (evtClick)="fightRound($event)"></app-hand-shape>
+        <app-hand-shape [handShape]="cpuHandShape!"
+          (evtClick)="fightRound($event)"></app-hand-shape>
       </ng-template>
     </div>
   </div>
 </div>
 
-<div *ngIf="fightRoundResult$|async as fightRoundResult" id="fight-round-result">
-  {{(fightRoundResult$|async) ? 'Win' : 'Loss'}}
+<div *ngIf="fightRoundResult$|async as fightRoundResult"
+  id="fight-round-result">
+  {{fightRoundResult.isTie ? 'Tie' : (fightRoundResult.isUserVictory ? 'Victory' : 'Loss')}}
 </div>
 
-<div *ngIf="errors$|async" id="server-errors">
+<div *ngIf="errors$|async"
+  id="server-errors">
   There was an unexpected server error :(
 </div>

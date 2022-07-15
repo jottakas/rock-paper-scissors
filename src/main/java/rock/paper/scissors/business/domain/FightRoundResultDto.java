@@ -1,11 +1,15 @@
 package rock.paper.scissors.business.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class FightRoundResultDto {
   /** Shape chosen by the computer */
   private String cpuShapeId;
   /** True if the user wins. False on loss or tie */
+  @JsonProperty("isUserVictory")
   private boolean isUserVictory;
   /** True on tie. False otherwise */
+  @JsonProperty("isTie")
   private boolean isTie;
 
   public String getCpuShapeId() {

@@ -2,9 +2,10 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
 import { HandShape } from '../shared/interfaces/hand-shape.interface';
+import { testUtils } from '../shared/util/test-utils';
 import { GameService } from './game.service';
 
-describe('RockPaperScissorsService', () => {
+describe('GameService', () => {
   let service: GameService;
   let httpMock: HttpTestingController;
 
@@ -50,7 +51,8 @@ describe('RockPaperScissorsService', () => {
     const requestId = service.getHandShapes();
     const expected = { requestId, data: shapes }
 
-    const req = httpMock.expectOne(`${API_URL}/hand-shapes`);
+    const url = testUtils.buildUrl(API_URL, 'hand-shapes');
+    const req = httpMock.expectOne(url);
     req.flush(shapes);
 
     expect(nextSpy).toHaveBeenCalledWith(expected)
@@ -61,7 +63,8 @@ describe('RockPaperScissorsService', () => {
     const mockResponse = { computerShapeId: '1', isUserWin: true }
     const expected = { requestId, data: mockResponse }
 
-    const req = httpMock.expectOne(`${API_URL}/fight-round`);
+    const url = testUtils.buildUrl(API_URL, 'fight-round');
+    const req = httpMock.expectOne(url);
     req.flush(mockResponse);
 
     expect(nextSpy).toHaveBeenCalledWith(expected)

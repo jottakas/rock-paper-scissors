@@ -30,6 +30,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     roundsPlayed: 0
   };
 
+  /** Store the subscriptions to cleanup on destroy */
   private cleanupSubscriptions: Subscription[] = [];
 
   constructor(private gameService: GameService,
@@ -48,14 +49,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
     utils.unsubscribe(this.cleanupSubscriptions);
   }
 
+  /**
+   * Processes the matches to create the latest match metrics
+   * @param matches List of all the matches
+   */
   private processMatches = (matches: Match[]) => {
     const maxMatchId = Math.max(...matches.map(m => m.id));
     const currentMatch = matches.find(m => m.id === maxMatchId)!;
 
     const { rounds } = currentMatch;
-
-    console.log(rounds.map(r => r.date))
-
 
     const roundsPlayed = rounds.length;
 

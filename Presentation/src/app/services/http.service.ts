@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { catchError, map, of, Subject, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, Subject, tap } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { environment } from '../../environments/environment';
 import { RestResponse } from '../shared/interfaces/rest-response.interface';
@@ -15,8 +15,8 @@ export class HttpService {
   /** Utility for optional spinner */
 
   /** Emits a request response */
-  public evtBusy$: Subject<boolean> = new Subject();
-  public evtRestResponse$: Subject<RestResponse<any>> = new Subject();
+  public evtBusy$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public evtRestResponse$: BehaviorSubject<RestResponse<any>> = new BehaviorSubject({requestId: 'init'});
 
   /** Queue of http requests */
   private requestQueue: string[] = [];

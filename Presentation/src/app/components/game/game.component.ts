@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Observable, Subscription, take } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { concat, filter, forkJoin, map, mergeMap, Observable, tap, withLatestFrom } from 'rxjs';
 import { FightRoundResult } from 'src/app/shared/interfaces/fight-round-result.interface';
 import { HandShape } from 'src/app/shared/interfaces/hand-shape.interface';
 import { GameService } from '../../services/game.service';
@@ -12,7 +12,7 @@ import { utils } from '../../shared/util/utils';
   styles: [
   ]
 })
-export class GameComponent implements OnInit, OnDestroy {
+export class GameComponent implements OnInit {
 
   handShapes$: Observable<HandShape[]> = this.gameService.evtRestResponse$.pipe(
     filter(response => response.requestId === this.getHandShapesRequestId),
@@ -24,6 +24,19 @@ export class GameComponent implements OnInit, OnDestroy {
     map(response => response.data)
   )
 
+  /** Result of the CPU shape */
+  cpuHandShape$: Observable<HandShape | undefined> = this.fightRoundResult$.pipe(
+    tap(r => console.log('ddd1', r)),
+    withLatestFrom(this.handShapes$),
+    tap(r => console.log('ddd2', r)),
+    map(([fightRoundResult, handShapes]) => handShapes.find(hs => hs.id === fightRoundResult.cpuShapeId))
+  )
+  // ([this.handShapes$, this.fightRoundResult$]).pipe(
+  //   map(
+  //     ([handShapes, fightRoundResult]) => handShapes.find(hs => hs.id === fightRoundResult.cpuShapeId)
+  //   )
+  // );
+
   errors$ = this.gameService.evtRestResponse$.pipe(
     filter(response => utils.isNotNullNorUndefined(response)),
     map(response => utils.isNotNullNorUndefined(response.error))
@@ -32,33 +45,13 @@ export class GameComponent implements OnInit, OnDestroy {
   private getHandShapesRequestId = '';
   private fightRoundRequestId = '';
 
-  /** Result of the CPU */
-  public cpuHandShape?: HandShape;
-
-  /** Store subscriptions for cleanup */
-  private cleanupSubscriptions: Subscription[] = [];
-
   constructor(private readonly gameService: GameService) { }
 
   ngOnInit(): void {
     this.getHandShapesRequestId = this.gameService.getHandShapes();
-
-    this.cleanupSubscriptions = [
-      this.fightRoundResult$.subscribe(this.processCpuShape)
-    ]
-  }
-
-  ngOnDestroy(): void {
-    utils.unsubscribe(this.cleanupSubscriptions);
   }
 
   fightRound(shapeId: HAND_SHAPES) {
     this.fightRoundRequestId = this.gameService.fightRound(shapeId);
-  }
-
-  private processCpuShape = (fightRoundResult: FightRoundResult) => {
-    this.handShapes$
-      .pipe(take(1))
-      .subscribe(handShapes => this.cpuHandShape = handShapes.find(hs => hs.id === fightRoundResult.cpuShapeId));
   }
 }

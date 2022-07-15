@@ -9,15 +9,16 @@
   </div>
   <div class="col-12 col-md-6">
     <div id="cpu-hand-shape">
-      <ng-template *ngIf="!cpuHandShape then waitingForUser; else cpuResult"></ng-template>
+      <ng-container *ngIf="cpuHandShape$|async as cpuHandShape; else waitingForUser">
+        <h2>CPU Result: </h2>
+        <app-hand-shape [isCpuHandShape]="true"
+          [handShape]="cpuHandShape">
+        </app-hand-shape>
+      </ng-container>
       <ng-template #waitingForUser>
         <h2>CPU: Waiting for user action</h2>
-        <app-hand-shape [handShape]="undefined"></app-hand-shape>
-      </ng-template>
-      <ng-template #cpuResult>
-        <h2>CPU Result: </h2>
-        <app-hand-shape [handShape]="cpuHandShape!"
-          (evtClick)="fightRound($event)"></app-hand-shape>
+        <app-hand-shape [isCpuHandShape]="true">
+        </app-hand-shape>
       </ng-template>
     </div>
   </div>

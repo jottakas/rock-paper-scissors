@@ -7,6 +7,7 @@ import { HttpService } from './http.service';
 import { utils } from '../shared/util/utils';
 import { environment } from '../../environments/environment';
 import { testUtils } from '../shared/util/test-utils';
+import { hot } from 'jasmine-marbles';
 
 describe('HttpService', () => {
   let service: HttpService;
@@ -44,51 +45,42 @@ describe('HttpService', () => {
       expect(getSpy).toHaveBeenCalledWith(expected);
     });
 
-    it('should emit the busy status as true', (fnDone) => {
-      getSpy.and.returnValue(of(true).pipe(delay(500)))
+    it('should emit the busy status as true', () => {
+      // Arrange
+      getSpy.and.returnValue(of(true).pipe(delay(500)));
 
-      subscriptions.push(
-        service.evtBusy$.subscribe(isBusy => {
-          expect(isBusy).toBeTrue();
-          fnDone();
-        })
-      );
-
+      // Act
       service.get(mockEndpoint);
+
+      // Assert
+      const expected = hot('a', { a: true })
+      expect(service.evtBusy$).toBeObservable(expected);
     });
 
-    it('should emit the result', (fnDone) => {
-      const mockHttpResponse = { data: 'mock data' };
-      const expected: RestResponse<any> = { requestId: '', data: mockHttpResponse };
+    it('should emit the result', () => {
+      // Arrange
+      const mockData = 'mock data';
+      getSpy.and.returnValue(of(mockData));
 
-      getSpy.and.returnValue(of(mockHttpResponse).pipe(delay(500)))
-
-      subscriptions.push(
-        service.evtRestResponse$.subscribe(restResponse => {
-          expect(restResponse).toEqual(expected);
-          fnDone();
-        })
-      );
-
+      // Act
       const requestId = service.get(mockEndpoint);
-      expected.requestId = requestId;
+
+      // Assert
+      const expected = hot('a', { a: { requestId, data: mockData } })
+      expect(service.evtRestResponse$).toBeObservable(expected);
     });
 
-    it('should emit the error when the request fails', (fnDone) => {
+    it('should emit the error when the request fails', () => {
+      // Arrange
       const mockHttpError = new HttpErrorResponse({ error: 'Mock error' });
-      const expected: RestResponse<any> = { requestId: '', error: mockHttpError };
+      getSpy.and.returnValue(of(false).pipe(map(() => { throw mockHttpError })))
 
-      getSpy.and.returnValue(of(false).pipe(delay(500), map(() => { throw mockHttpError })))
-
-      subscriptions.push(
-        service.evtRestResponse$.subscribe(restResponse => {
-          expect(restResponse).toEqual(expected);
-          fnDone();
-        })
-      );
-
+      // Act
       const requestId = service.get(mockEndpoint);
-      expected.requestId = requestId;
+
+      // Assert
+      const expected = hot('a', { a: { requestId, error: mockHttpError } })
+      expect(service.evtRestResponse$).toBeObservable(expected);
     });
   })
 });

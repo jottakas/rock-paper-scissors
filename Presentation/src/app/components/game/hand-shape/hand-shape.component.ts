@@ -13,6 +13,8 @@ export class HandShapeComponent implements OnInit {
   readonly HAND_SHAPES = HAND_SHAPES;
 
   @Input() handShape?: HandShape;
+  /** If the hand shape is the cpu, it will display a disabled card */
+  @Input() isCpuHandShape: boolean = false;
   @Output() evtClick: EventEmitter<HAND_SHAPES> = new EventEmitter();
 
   /** Adds a hover background to the card */

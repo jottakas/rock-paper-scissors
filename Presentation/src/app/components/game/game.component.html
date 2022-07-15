@@ -1,13 +1,13 @@
 <h1>Rock Paper Scissors</h1>
 
-<div class="row">
+<div class="row" *ngIf="matchId$|async as matchId">
   <div class="col-12">
     <h2>Select an action</h2>
     <div *ngFor="let handShape of handShapes$|async"
       id="user-hand-shapes"
       class="d-inline-block mr-3">
       <app-hand-shape [handShape]="handShape"
-        (evtClick)="fightRound($event)"></app-hand-shape>
+        (evtClick)="fightRound(matchId, $event)"></app-hand-shape>
     </div>
   </div>
 </div>

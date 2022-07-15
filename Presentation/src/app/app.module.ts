@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { GameComponent } from './components/game/game.component';
 import { HandShapeComponent } from './components/game/hand-shape/hand-shape.component';
+import { MetricsComponent } from './components/metrics/metrics.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { HandShapeComponent } from './components/game/hand-shape/hand-shape.comp
     UserListComponent,
     UserFormComponent,
     GameComponent,
-    HandShapeComponent
+    HandShapeComponent,
+    MetricsComponent
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, map, Observable, withLatestFrom } from 'rxjs';
+import { filter, map, Observable, tap, withLatestFrom } from 'rxjs';
 import { FightRoundResult } from 'src/app/shared/interfaces/fight-round-result.interface';
 import { HandShape } from 'src/app/shared/interfaces/hand-shape.interface';
 import { GameService } from '../../services/game.service';
@@ -16,13 +16,21 @@ export class GameComponent implements OnInit {
   /** Retrieve the possible hand shapes */
   handShapes$: Observable<HandShape[]> = this.gameService.evtRestResponse$.pipe(
     filter(response => response.requestId === this.getHandShapesRequestId),
-    map(response => response.data)
+    map(utils.mapResponseData)
+  )
+
+  /** Retrieve the created match id */
+  matchId$: Observable<number> = this.gameService.evtRestResponse$.pipe(
+    filter(response => response.requestId === this.createMatchRequestId),
+    map(utils.mapResponseData),
+    // After creating the match, retrieve the hand shapes via side effect
+    tap(() => this.getHandShapesRequestId = this.gameService.getHandShapes())
   )
 
   /** Retrieve the fight round result. Contains the cpu shape and the outcome */
   fightRoundResult$: Observable<FightRoundResult> = this.gameService.evtRestResponse$.pipe(
     filter(response => response.requestId === this.fightRoundRequestId),
-    map(response => response.data)
+    map(utils.mapResponseData)
   )
 
   /** Result of the CPU shape */
@@ -42,21 +50,23 @@ export class GameComponent implements OnInit {
 
   /** Correlation id of the request */
   private getHandShapesRequestId = '';
+  /** Correlation id of the match creation */
+  private createMatchRequestId = '';
   /** Correlation id of the request */
   private fightRoundRequestId = '';
 
   constructor(private readonly gameService: GameService) { }
 
   ngOnInit(): void {
-    this.getHandShapesRequestId = this.gameService.getHandShapes();
+    this.createMatchRequestId = this.gameService.createMatch();
   }
 
   /**
    * Send the user selection to fight the cpu
    * @param handShape user selection
    */
-  fightRound(handShape: HandShape) {
+  fightRound(matchId: number, handShape: HandShape) {
     this.userSelectedShape = handShape;
-    this.fightRoundRequestId = this.gameService.fightRound(handShape.id);
+    this.fightRoundRequestId = this.gameService.fightRound(matchId, handShape.id);
   }
 }

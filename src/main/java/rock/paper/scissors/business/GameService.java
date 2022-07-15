@@ -25,13 +25,6 @@ public class GameService {
 
   public List<HandShapeDto> getHandShapes() {
     List<HandShape> entities = (List<HandShape>) handShapeRepository.findAll();
-    System.out.println("aaa" + entities.size());
-    HandShape cpuHandShape = handShapeRepository
-        .findById(String.valueOf("1"))
-        .orElseThrow(() -> new EntityNotFoundException("1"));
-
-        System.out.println("bbb " + (cpuHandShape!= null));
-
     return HandShapeMapper.mapListFrom(entities);
   }
 

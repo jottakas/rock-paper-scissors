@@ -1,4 +1,4 @@
-<ng-container [ngSwitch]="handShape.id">
+<!-- <ng-container [ngSwitch]="handShape.id">
     <div *ngSwitchCase="HAND_SHAPES.Rock">
         <i class="fa-solid fa-hand-back-fist"></i>
     </div>
@@ -8,4 +8,32 @@
     <div *ngSwitchCase="HAND_SHAPES.Scissors">
         <i class="fa-solid fa-hand-scissors"></i>
     </div>
+</ng-container> -->
+
+<ng-container *ngIf="handShape; else emptyHandShape">
+    <div class="card border-primary mb-3 hand-shape-card pointer" [class.bg-primary]="isHover"
+        (mouseover)="isHover = true" (mouseout)="isHover = false"
+        (click)="evtClick.emit(handShape.id)">
+        <div class="card-body flex-center flex-column" [ngClass]="isHover ? 'text-white' : 'text-primary'">
+            <div class="card-text h-100">
+                <div class="flex-center h-100">
+                    <i *ngIf="handShape" class="fa-solid hand-shape-icon" [ngClass]="shapeIdToIcon[handShape.id]"></i>
+                </div>
+            </div>
+            <footer>
+                <b>{{handShape.name}}</b>
+            </footer>
+        </div>
+    </div>
 </ng-container>
+<ng-template #emptyHandShape>
+    <div class="card mb-3 hand-shape-card">
+        <div class="card-body flex-center flex-column">
+            <div class="card-text h-100">
+                <div class="flex-center h-100">
+                    <i class="fa-solid fa-question hand-shape-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

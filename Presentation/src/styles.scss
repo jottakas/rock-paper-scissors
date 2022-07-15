@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+
+.hand-shape-card {
+    $size: 200px;
+    width: $size;
+    height: $size;
+    transition: background 0.4s;
+}
+
+.hand-shape-icon {
+    font-size: 72px;
+    color: #000;
+}

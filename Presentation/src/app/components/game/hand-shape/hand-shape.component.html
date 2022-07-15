@@ -1,7 +1,7 @@
-<ng-container *ngIf="!isCpuHandShape && handShape; else cpuHandShape">
+<ng-container *ngIf="!isDisabled && handShape; else disabledHandShape">
     <div class="card border-primary mb-3 hand-shape-card pointer" [class.bg-primary]="isHover"
         (mouseover)="isHover = true" (mouseout)="isHover = false"
-        (click)="evtClick.emit(handShape.id)">
+        (click)="!isDisabled && evtClick.emit(handShape)">
         <div class="card-body flex-center flex-column" [ngClass]="isHover ? 'text-white' : 'text-primary'">
             <div class="card-text h-100">
                 <div class="flex-center h-100">
@@ -14,8 +14,8 @@
         </div>
     </div>
 </ng-container>
-<ng-template #cpuHandShape>
-    <div class="card mb-3 hand-shape-card">
+<ng-template #disabledHandShape>
+    <div class="card mb-3 hand-shape-card bg-disabled">
         <div class="card-body flex-center flex-column">
             <div class="card-text h-100">
                 <div class="flex-center h-100">

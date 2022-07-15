@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 .hand-shape-card {
+    display: inline-flex;
     $size: 200px;
     width: $size;
     height: $size;
@@ -10,4 +11,25 @@
 .hand-shape-icon {
     font-size: 72px;
     color: #000;
+}
+
+.outcome {
+    display: inline-block;
+    min-width: 150px;
+    text-align: center;
+}
+
+.outcome-tie,
+.outcome-win,
+.outcome-loss {
+    color: #fff;
+}
+.outcome-tie {
+    background: #6c757d;
+}
+.outcome-win {
+    background: #28a745;
+}
+.outcome-loss {
+    background: #dc3545;
 }

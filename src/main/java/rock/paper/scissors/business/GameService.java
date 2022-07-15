@@ -6,11 +6,19 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 
-import rock.paper.scissors.business.domain.FightRoundResultBuilder;
+import rock.paper.scissors.business.domain.FightRoundResultDtoBuilder;
 import rock.paper.scissors.business.domain.FightRoundResultDto;
-import rock.paper.scissors.business.domain.HandShapeDto;
+import rock.paper.scissors.business.domain.handShapes.HandShapeDto;
+import rock.paper.scissors.business.domain.mappers.HandShapeMapper;
+import rock.paper.scissors.business.domain.mappers.MapperCache;
+import rock.paper.scissors.data.DdFightRoundResultRepository;
+import rock.paper.scissors.data.FightRoundResultRepository;
 import rock.paper.scissors.data.HandShapeRepository;
+import rock.paper.scissors.data.MatchRepository;
+import rock.paper.scissors.data.entities.DdFightRoundResult;
+import rock.paper.scissors.data.entities.FightRoundResult;
 import rock.paper.scissors.data.entities.HandShape;
+import rock.paper.scissors.data.entities.Match;
 import rock.paper.scissors.utils.Constants;
 import rock.paper.scissors.utils.Utils;
 
@@ -18,9 +26,17 @@ import rock.paper.scissors.utils.Utils;
 public class GameService {
 
   private final HandShapeRepository handShapeRepository;
+  private final MatchRepository matchRepository;
+  private final FightRoundResultRepository fightRoundResultRepository;
+  private final DdFightRoundResultRepository ddFightRoundResultRepository;
 
-  public GameService(HandShapeRepository handShapeRepository) {
+  public GameService(HandShapeRepository handShapeRepository, MatchRepository matchRepository,
+      FightRoundResultRepository fightRoundResultRepository,
+      DdFightRoundResultRepository ddFightRoundResultRepository) {
     this.handShapeRepository = handShapeRepository;
+    this.matchRepository = matchRepository;
+    this.fightRoundResultRepository = fightRoundResultRepository;
+    this.ddFightRoundResultRepository = ddFightRoundResultRepository;
   }
 
   /**
@@ -31,25 +47,31 @@ public class GameService {
    */
   public List<HandShapeDto> getHandShapes() {
     List<HandShape> entities = (List<HandShape>) handShapeRepository.findAll();
-    return HandShapeMapper.mapListFrom(entities);
+    return MapperCache.handShapeMapper.mapListFrom(entities);
+  }
+
+  public long createMatch() {
+    return matchRepository.save(new Match()).getId();
   }
 
   /**
    * Sends the user choice to check randomly if it wins
    *
-   * @param shapeId user choice
+   * @param userShapeId user choice
    * @return win, loss or tie depending on randomness
    * @throws Exception when the random cpu shape id is unexpected
    */
-  public FightRoundResultDto fightRound(String shapeId) throws Exception {
+  public FightRoundResultDto fightRound(long matchId, String userShapeId) throws Exception {
     int cpuShapeId = Utils.getRandom(1, 3);
 
     HandShape cpuHandShape = handShapeRepository
         .findById(String.valueOf(cpuShapeId))
-        .orElseThrow(() -> new EntityNotFoundException(shapeId));
+        .orElseThrow(() -> new EntityNotFoundException(userShapeId));
 
-    HandShapeDto cpuDto = HandShapeMapper.mapFrom(cpuHandShape);
-    FightRoundResultDto result = processFightRoundResult(shapeId, cpuDto.getId());
+    HandShapeDto cpuDto = MapperCache.handShapeMapper.mapFrom(cpuHandShape);
+    FightRoundResultDto result = processFightRoundResult(userShapeId, cpuDto.getId());
+
+    saveFightResult(matchId, userShapeId, cpuDto.getId(), result);
 
     return result;
   }
@@ -65,7 +87,7 @@ public class GameService {
     boolean isTie = userShapeId.equals(cpuShapeId);
 
     // Assume it's a loss
-    FightRoundResultBuilder resultBuilder = new FightRoundResultBuilder(cpuShapeId)
+    FightRoundResultDtoBuilder resultBuilder = new FightRoundResultDtoBuilder(cpuShapeId)
         .withUserLoss();
 
     if (isTie) {
@@ -75,6 +97,42 @@ public class GameService {
     }
 
     return resultBuilder.build();
+  }
+
+  /**
+   * Saves the fight result for metric purpouses
+   */
+  private void saveFightResult(long matchId, String userHandShapeId, String cpuHandShapeId,
+      FightRoundResultDto fightResultDto) {
+
+    FightRoundResult fightResult = new FightRoundResult();
+    fightResult.setUserHandShapeId(userHandShapeId);
+    fightResult.setCpuHandShapeId(cpuHandShapeId);
+
+    Match match = matchRepository.findById(matchId).orElseThrow();
+    fightResult.setMatch(match);
+
+    // Increment the roound number by one
+    int roundNumber = match.getFightRoundResult().size() + 1;
+    fightResult.setRoundNumber(roundNumber);
+
+    DdFightRoundResult ddFightRoundResult = resolveDdFightRoundResult(fightResultDto);
+    fightResult.setDdFightRoundResult(ddFightRoundResult);
+
+    fightRoundResultRepository.save(fightResult);
+  }
+
+  /** Retrieves the corresponding fight result entity based on the result DTO */
+  private DdFightRoundResult resolveDdFightRoundResult(FightRoundResultDto fightResultDto) {
+    String ddResultId = Constants.FightRoundResult.TIE;
+    if (!fightResultDto.isTie()) {
+      ddResultId = fightResultDto.isUserVictory() ? Constants.FightRoundResult.VICTORY
+          : Constants.FightRoundResult.LOSS;
+    }
+    DdFightRoundResult ddResult = ddFightRoundResultRepository.findById(ddResultId)
+        .orElseThrow(() -> new EntityNotFoundException());
+
+    return ddResult;
   }
 
   /**

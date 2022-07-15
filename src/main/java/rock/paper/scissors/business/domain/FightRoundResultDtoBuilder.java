@@ -1,14 +1,14 @@
 package rock.paper.scissors.business.domain;
 
 /** Builder for the result to set victory, loss or tie */
-public class FightRoundResultBuilder {
+public class FightRoundResultDtoBuilder {
   private FightRoundResultDto dto;
 
   /**
    * Builder constructor. The CPU selection is required
    * @param cpuShapeId CPU selection
    */
-  public FightRoundResultBuilder(String cpuShapeId) {
+  public FightRoundResultDtoBuilder(String cpuShapeId) {
     this.dto = new FightRoundResultDto();
     this.dto.setCpuShapeId(cpuShapeId);
   }
@@ -17,7 +17,7 @@ public class FightRoundResultBuilder {
    * A victory means that victory is true and tie is false
    * @return builder to keep building
    */
-  public FightRoundResultBuilder withUserVictory() {
+  public FightRoundResultDtoBuilder withUserVictory() {
     this.dto.setUserVictory(true);
     this.dto.setTie(false);
     return this;
@@ -27,7 +27,7 @@ public class FightRoundResultBuilder {
    * A loss means that victory is false and tie is false
    * @return builder to keep building
    */
-  public FightRoundResultBuilder withUserLoss() {
+  public FightRoundResultDtoBuilder withUserLoss() {
     this.dto.setUserVictory(false);
     this.dto.setTie(false);
     return this;
@@ -37,7 +37,7 @@ public class FightRoundResultBuilder {
    * A victory means that victory is false and tie is true
    * @return builder to keep building
    */
-  public FightRoundResultBuilder withTie() {
+  public FightRoundResultDtoBuilder withTie() {
     this.dto.setUserVictory(false);
     this.dto.setTie(true);
     return this;

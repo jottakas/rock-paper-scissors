@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { HAND_SHAPES } from 'src/app/shared/enums/hand-shapes.enum';
-import { HandShape } from 'src/app/shared/interfaces/hand-shape.interface';
+import { HAND_SHAPES } from '../../../../shared/enums/hand-shapes.enum';
+import { HandShape } from '../../../../shared/interfaces/hand-shape.interface';
 
 import { HandShapeComponent } from './hand-shape.component';
 

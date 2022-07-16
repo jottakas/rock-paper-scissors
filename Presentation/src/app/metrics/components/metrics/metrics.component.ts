@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, map, Subscription } from 'rxjs';
-import { GameService } from '../../services/game.service';
-import { MetricsService } from '../../services/metrics.service';
-import { DD_FIGHT_ROUND_RESULT } from '../../shared/enums/dd-fight-round-result.enum';
-import { MatchMetrics } from '../../shared/interfaces/match-metrics.interface';
-import { Match } from '../../shared/interfaces/match.interface';
-import { utils } from '../../shared/util/utils';
+import { GameService } from '../../../services/game.service';
+import { MetricsService } from '../../../services/metrics.service';
+import { DD_FIGHT_ROUND_RESULT } from '../../../shared/enums/dd-fight-round-result.enum';
+import { MatchMetrics } from '../../../shared/interfaces/match-metrics.interface';
+import { Match } from '../../../shared/interfaces/match.interface';
+import { utils } from '../../../shared/util/utils';
 
 @Component({
   selector: 'app-metrics',

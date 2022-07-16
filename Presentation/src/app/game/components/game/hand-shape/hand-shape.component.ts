@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { HandShape } from 'src/app/shared/interfaces/hand-shape.interface';
-import { HAND_SHAPES } from '../../../shared/enums/hand-shapes.enum';
+import { HAND_SHAPES } from '../../../../shared/enums/hand-shapes.enum';
+import { HandShape } from '../../../../shared/interfaces/hand-shape.interface';
 
 @Component({
   selector: 'app-hand-shape',

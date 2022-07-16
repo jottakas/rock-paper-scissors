@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, map, Observable, tap, withLatestFrom } from 'rxjs';
+import { filter, map, Observable, withLatestFrom } from 'rxjs';
 import { GameService } from '../../../services/game.service';
 import { ServiceActions } from '../../../services/service-actions';
 import { FightRoundResult } from '../../../shared/interfaces/fight-round-result.interface';
@@ -47,6 +47,13 @@ export class GameComponent implements OnInit {
     map(response => utils.isNotNullNorUndefined(response.error))
   )
 
+  /** Current rounds per match */
+  currentRoundsPerMatch = 5;
+  /** User input to modify the current rounds per match */
+  newRoundsPerMatch = this.currentRoundsPerMatch;
+  /** Current round playing */
+  currentRound: number = 1;
+
   constructor(private readonly gameService: GameService) { }
 
   ngOnInit(): void {
@@ -63,8 +70,20 @@ export class GameComponent implements OnInit {
       this.createMatch();
   }
 
+  /**
+  * Asks the user if he wants to create a new match
+  */
+  changeRoundsPerMatch(newRoundsPerMatch: number) {
+    const isConfirmed = confirm('Do you want to start another match? You will not see the current stats anymore although they are still in the database')
+    if (isConfirmed) {
+      this.currentRoundsPerMatch = newRoundsPerMatch;
+      this.createMatch();
+    }
+  }
+
   /** Creates a new match */
   private createMatch = () => {
+    this.currentRound = 1;
     this.gameService.createMatch();
   }
   /**
@@ -72,6 +91,7 @@ export class GameComponent implements OnInit {
    * @param handShape user selection
    */
   fightRound(matchId: number, handShape: HandShape) {
+    this.currentRound++;
     this.userSelectedShape = handShape;
     this.gameService.fightRound(matchId, handShape.id);
   }

@@ -4,17 +4,18 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import rock.paper.scissors.business.api.MetricsService;
 import rock.paper.scissors.business.domain.MatchDto;
 import rock.paper.scissors.business.domain.mappers.MapperCache;
 import rock.paper.scissors.data.MatchRepository;
 import rock.paper.scissors.data.entities.Match;
 
 @Service
-public class MetricsService {
+public class MetricsServiceImpl implements MetricsService {
 
   private final MatchRepository matchRepository;
 
-  public MetricsService(MatchRepository matchRepository) {
+  public MetricsServiceImpl(MatchRepository matchRepository) {
     this.matchRepository = matchRepository;
   }
 

@@ -130,10 +130,10 @@ export class GameComponent implements OnInit, OnDestroy {
     this.isMatchFinished = this.currentRound > this.currentRoundsPerMatch ||
       userVictories >= minRoundsToWin || cpuVictories >= minRoundsToWin;
 
+    this.matchResult = undefined;
     if (this.isMatchFinished) {
-      this.matchResult = this.isMatchFinished && (
-        userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS
-      );
+      this.matchResult = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
+      alert(`Match outcome: ${this.matchResultToString(this.matchResult)}`)
     }
   }
 

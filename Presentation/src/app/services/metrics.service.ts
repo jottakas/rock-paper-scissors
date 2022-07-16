@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
+import { ServiceActions } from './service-actions';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class MetricsService extends HttpService {
    * Gets the hand shapes
    * @returns Correlation id
    */
-   public getMatches(): string {
-    return super.get('matches');
+  public getMatches(): string {
+    return super.get({ endpoint: 'matches', action: ServiceActions.Metrics.GET_MATCHES });
   }
 }

@@ -4,6 +4,7 @@ import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
 import { HandShape } from '../shared/interfaces/hand-shape.interface';
 import { testUtils } from '../shared/util/test-utils';
 import { GameService } from './game.service';
+import { ServiceActions } from './service-actions';
 
 describe('GameService', () => {
   let service: GameService;
@@ -49,7 +50,7 @@ describe('GameService', () => {
     ]
 
     const requestId = service.getHandShapes();
-    const expected = { requestId, data: shapes }
+    const expected = { requestId, action: ServiceActions.Game.GET_HAND_SHAPES, data: shapes }
 
     const url = testUtils.buildUrl(API_URL, 'hand-shapes');
     const req = httpMock.expectOne(url);
@@ -62,7 +63,7 @@ describe('GameService', () => {
     const mockMatchId = 1;
     const requestId = service.fightRound(mockMatchId, {} as any);
     const mockResponse = { computerShapeId: '1', isUserWin: true }
-    const expected = { requestId, data: mockResponse }
+    const expected = { requestId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResponse }
 
     const url = testUtils.buildUrl(API_URL, `${mockMatchId}/fight-round`);
     const req = httpMock.expectOne(url);

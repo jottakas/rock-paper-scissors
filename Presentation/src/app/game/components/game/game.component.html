@@ -30,21 +30,21 @@
 <div class="row mt-5"
   *ngIf="matchId$|async as matchId">
   <div class="col-12">
-    <h2 *ngIf="!isMatchFinished && currentRound < currentRoundsPerMatch">
+    <h2 *ngIf="matchResult !== undefined && currentRound < currentRoundsPerMatch">
       Select an action for round {{currentRound}} of {{currentRoundsPerMatch}}
     </h2>
-    <h2 *ngIf="isMatchFinished">
+    <h2 *ngIf="matchResult">
       Match finished!
     </h2>
     <div *ngFor="let handShape of handShapes$|async"
       id="user-hand-shapes"
       class="d-inline-block mr-3">
       <app-hand-shape [handShape]="handShape"
-        [isDisabled]="isMatchFinished"
+        [isDisabled]="matchResult !== undefined"
         (evtClick)="fightRound(matchId, $event)"></app-hand-shape>
     </div>
 
-    <button *ngIf="isMatchFinished"
+    <button *ngIf="matchResult"
       class="btn btn-primary"
       (click)="createMatch()">Play another match</button>
   </div>
@@ -114,7 +114,7 @@
   <!-- END Round Result: Victory, loss or tie -->
 
   <!-- Match Result: Victory, loss or tie -->
-  <div *ngIf="isMatchFinished && matchResult"
+  <div *ngIf="matchResult"
     id="match-round-result"
     class="h2 pt-3 pr-3 pb-3 border border-light">
     <span class="pt-1 pb-1">

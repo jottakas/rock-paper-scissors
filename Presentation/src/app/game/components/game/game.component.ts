@@ -53,7 +53,6 @@ export class GameComponent implements OnInit, OnDestroy {
   currentRound: number = 1;
 
   public readonly DD_FIGHT_ROUND_RESULT = DD_FIGHT_ROUND_RESULT;
-  isMatchFinished = false;
   matchResult?: DD_FIGHT_ROUND_RESULT;
 
   /** Store the round results to display the final result */
@@ -100,7 +99,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   /** Creates a new match */
   public createMatch = () => {
-    this.isMatchFinished = false;
+    this.matchResult = undefined;
     this.currentRound = 1;
     this.roundResults = [];
 
@@ -127,13 +126,13 @@ export class GameComponent implements OnInit, OnDestroy {
     const userVictories = this.roundResults.filter(r => r === VICTORY).length;
     const cpuVictories = this.roundResults.filter(r => r === LOSS).length;
 
-    this.isMatchFinished = this.currentRound > this.currentRoundsPerMatch ||
+    const isMatchFinished = this.currentRound > this.currentRoundsPerMatch ||
       userVictories >= minRoundsToWin || cpuVictories >= minRoundsToWin;
 
     this.matchResult = undefined;
-    if (this.isMatchFinished) {
+    if (isMatchFinished) {
       this.matchResult = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
-      alert(`Match outcome: ${this.matchResultToString(this.matchResult)}`)
+      setTimeout(() => alert(`Match outcome: ${this.matchResultToString(this.matchResult!)}`))
     }
   }
 

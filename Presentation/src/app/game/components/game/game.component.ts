@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { filter, map, Observable, tap, withLatestFrom } from 'rxjs';
-import { FightRoundResult } from 'src/app/shared/interfaces/fight-round-result.interface';
-import { HandShape } from 'src/app/shared/interfaces/hand-shape.interface';
-import { GameService } from '../../services/game.service';
-import { utils } from '../../shared/util/utils';
+import { GameService } from '../../../services/game.service';
+import { FightRoundResult } from '../../../shared/interfaces/fight-round-result.interface';
+import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
+import { utils } from '../../../shared/util/utils';
 
 @Component({
   selector: 'app-game',

@@ -1,12 +1,11 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { cold, hot } from 'jasmine-marbles';
 import { Subject } from 'rxjs';
-import { GameService } from '../../services/game.service';
-import { HAND_SHAPES } from '../../shared/enums/hand-shapes.enum';
-import { FightRoundResult } from '../../shared/interfaces/fight-round-result.interface';
-import { HandShape } from '../../shared/interfaces/hand-shape.interface';
+import { GameService } from '../../../services/game.service';
+import { HAND_SHAPES } from '../../../shared/enums/hand-shapes.enum';
+import { FightRoundResult } from '../../../shared/interfaces/fight-round-result.interface';
+import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
 
 import { GameComponent } from './game.component';
 import { HandShapeComponent } from './hand-shape/hand-shape.component';

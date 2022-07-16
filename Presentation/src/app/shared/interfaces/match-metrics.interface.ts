@@ -1,5 +1,6 @@
 
 export interface MatchMetrics {
+    matchId: number;
     victories: number;
     losses: number;
     ties: number;

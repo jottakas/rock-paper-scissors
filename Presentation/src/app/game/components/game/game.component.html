@@ -5,7 +5,7 @@
     <span>How many rounds do you want to play per match?</span>
     <div>Current rounds per match: {{currentRoundsPerMatch}}</div>
 
-    <form>
+    <form #roundsForm="ngForm">
       <div class="form-group">
         <label for="roundsPerMatch">New rounds per match</label>
         <input type="number"
@@ -18,6 +18,7 @@
       </div>
 
       <button class="btn btn-primary"
+        [disabled]="roundsForm.invalid"
         (click)="changeRoundsPerMatch(newRoundsPerMatch)">
         Change the rounds per match (reset stats)
       </button>
@@ -29,13 +30,23 @@
 <div class="row mt-5"
   *ngIf="matchId$|async as matchId">
   <div class="col-12">
-    <h2>Select an action for round {{currentRound}} of {{currentRoundsPerMatch}}</h2>
+    <h2 *ngIf="!isMatchFinished && currentRound < currentRoundsPerMatch">
+      Select an action for round {{currentRound}} of {{currentRoundsPerMatch}}
+    </h2>
+    <h2 *ngIf="isMatchFinished">
+      Match finished!
+    </h2>
     <div *ngFor="let handShape of handShapes$|async"
       id="user-hand-shapes"
       class="d-inline-block mr-3">
       <app-hand-shape [handShape]="handShape"
+        [isDisabled]="isMatchFinished"
         (evtClick)="fightRound(matchId, $event)"></app-hand-shape>
     </div>
+
+    <button *ngIf="isMatchFinished"
+      class="btn btn-primary"
+      (click)="createMatch()">Play another match</button>
   </div>
 </div>
 <!-- END User needs to select an action -->
@@ -44,7 +55,9 @@
 <div class="row mt-5"
   style="max-width: 700px">
   <div class="col-12 mb-1">
-    Result of round {{currentRound === 1 ? '-' : currentRound-1}}
+    <h3>
+      Result of round {{currentRound === 1 ? '?' : currentRound-1}}
+    </h3>
   </div>
   <div class="col-12 col-md-4">
     <h3>User selection</h3>
@@ -81,11 +94,11 @@
   </div>
   <!-- END Shapes outcome of the round -->
 
-  <!-- Result: Victory, loss or tie -->
+  <!-- Round Result: Victory, loss or tie -->
   <div id="fight-round-result"
     class="h2 pt-3 pr-3 pb-3 border border-light">
     <span class="pt-1 pb-1">
-      Round {{currentRound === 1? '-' : currentRound-1}} outcome:
+      Round {{currentRound === 1? '?' : currentRound-1}} outcome:
     </span>
     <span *ngIf="fightRoundResult$|async as fightRoundResult; else outcomePending"
       [class.outcome-tie]="fightRoundResult.isTie"
@@ -98,7 +111,26 @@
       <span class="outcome p-1 pl-3 pr-3">-</span>
     </ng-template>
   </div>
-  <!-- END Result: Victory, loss or tie -->
+  <!-- END Round Result: Victory, loss or tie -->
+
+  <!-- Match Result: Victory, loss or tie -->
+  <div *ngIf="isMatchFinished && matchResult"
+    id="match-round-result"
+    class="h2 pt-3 pr-3 pb-3 border border-light">
+    <span class="pt-1 pb-1">
+      Match {{matchId$|async}} outcome:
+    </span>
+    <span [class.outcome-tie]="matchResult === DD_FIGHT_ROUND_RESULT.Tie"
+      [class.outcome-win]="matchResult === DD_FIGHT_ROUND_RESULT.Victory"
+      [class.outcome-loss]="matchResult === DD_FIGHT_ROUND_RESULT.Loss"
+      class="outcome p-1 pl-3 pr-3">
+      {{matchResultToString(matchResult)}}
+    </span>
+    <ng-template #outcomePending>
+      <span class="outcome p-1 pl-3 pr-3">-</span>
+    </ng-template>
+  </div>
+  <!-- Match END Result: Victory, loss or tie -->
 
   <div class="h2 pt-3 pr-3 pb-3 border border-light">
     <button class="btn btn-primary"

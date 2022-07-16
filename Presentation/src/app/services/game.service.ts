@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { filter, map } from 'rxjs';
 import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
+import { utils } from '../shared/util/utils';
 import { HttpService } from './http.service';
 import { ServiceActions } from './service-actions';
 
@@ -8,6 +10,14 @@ import { ServiceActions } from './service-actions';
 })
 export class GameService extends HttpService {
   protected override readonly apiUrl = 'rock-paper-scissors';
+
+  /** Selectors for the different events */
+  public selectors = {
+    selectMatchId: this.evtRestResponse$.pipe(
+      filter(response => response.action === ServiceActions.Game.CREATE_MATCH),
+      map(utils.mapResponseData)
+    )
+  }
 
   /**
    * Gets the hand shapes

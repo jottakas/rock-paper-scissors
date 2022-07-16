@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { GameService } from '../../../services/game.service';
+import { ServiceActions } from '../../../services/service-actions';
 import { HAND_SHAPES } from '../../../shared/enums/hand-shapes.enum';
 import { FightRoundResult } from '../../../shared/interfaces/fight-round-result.interface';
 import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
@@ -62,14 +63,14 @@ describe('GameComponent', () => {
         });
 
         // Act
-        gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, data: mockMatchId });
+        gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, action: ServiceActions.Game.CREATE_MATCH, data: mockMatchId });
       })
     })
 
     describe('Hand shape retrieval', () => {
 
       beforeEach(() => {
-        gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, data: 1 });
+        gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, action: ServiceActions.Game.CREATE_MATCH, data: 1 });
       });
 
       it('should retrieve the data', () => {
@@ -89,7 +90,7 @@ describe('GameComponent', () => {
         });
 
         // Act
-        gameServiceSpy.evtRestResponse$.next({ requestId: getHandShapesMockId, data: mockShapes });
+        gameServiceSpy.evtRestResponse$.next({ requestId: getHandShapesMockId, action: ServiceActions.Game.GET_HAND_SHAPES, data: mockShapes });
       })
     })
 
@@ -111,7 +112,7 @@ describe('GameComponent', () => {
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
-          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
           const result = getResultContent();
@@ -122,7 +123,7 @@ describe('GameComponent', () => {
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
-          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
           const result = getResultContent();
@@ -133,7 +134,7 @@ describe('GameComponent', () => {
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
-          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
           const result = getResultContent();
@@ -145,7 +146,7 @@ describe('GameComponent', () => {
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
-          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
           const icon = fixture.debugElement.query(By.css('#user-selected-shape i'))
@@ -158,7 +159,7 @@ describe('GameComponent', () => {
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
-          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, data: mockResult });
+          gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
           const icon = fixture.debugElement.query(By.css('#user-selected-shape i'))

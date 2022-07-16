@@ -9,6 +9,9 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     HttpClientModule,
     FormsModule
-  ]
+  ],
+   exports: [
+    FormsModule
+   ]
 })
 export class SharedModule { }

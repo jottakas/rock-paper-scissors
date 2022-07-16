@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Subscription } from 'rxjs';
+import { filter, map, Observable, Subscription } from 'rxjs';
 import { GameService } from '../../../services/game.service';
 import { MetricsService } from '../../../services/metrics.service';
 import { DD_FIGHT_ROUND_RESULT } from '../../../shared/enums/dd-fight-round-result.enum';
@@ -20,7 +20,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
     map(utils.mapResponseData)
   );
 
-  public matchMetrics: MatchMetrics = this.initMatchMetrics();
+  /** Retrieve the created match id */
+  currentMatchId$: Observable<number> = this.gameService.selectors.selectMatchId;
+
+  public currentMatchMetrics: MatchMetrics = this.initMatchMetrics();
 
   /** Store the subscriptions to cleanup on destroy */
   private cleanupSubscriptions: Subscription[] = [];
@@ -43,6 +46,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   private initMatchMetrics() {
     return {
+      matchId: -1,
       victories: 0,
       losses: 0,
       ties: 0,
@@ -64,14 +68,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
     const { rounds } = currentMatch;
     const roundsPlayed = rounds.length;
 
-    this.matchMetrics = this.initMatchMetrics();
+    this.currentMatchMetrics = this.initMatchMetrics();
 
     if (roundsPlayed > 0) {
       const victoryRounds = rounds.filter(r => r.resultDto?.id === DD_FIGHT_ROUND_RESULT.Victory);
       const lossRounds = rounds.filter(r => r.resultDto?.id === DD_FIGHT_ROUND_RESULT.Loss);
       const tieRounds = rounds.filter(r => r.resultDto?.id === DD_FIGHT_ROUND_RESULT.Tie);
 
-      this.matchMetrics = {
+      this.currentMatchMetrics = {
+        matchId: currentMatch.id,
         victories: victoryRounds.length,
         losses: lossRounds.length,
         ties: tieRounds.length,

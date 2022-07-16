@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
+import { filter, map } from 'rxjs';
 import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
+import { utils } from '../shared/util/utils';
 import { HttpService } from './http.service';
+import { ServiceActions } from './service-actions';
 
 @Injectable({
   providedIn: 'root'
@@ -8,12 +11,20 @@ import { HttpService } from './http.service';
 export class GameService extends HttpService {
   protected override readonly apiUrl = 'rock-paper-scissors';
 
+  /** Selectors for the different events */
+  public selectors = {
+    selectMatchId: this.evtRestResponse$.pipe(
+      filter(response => response.action === ServiceActions.Game.CREATE_MATCH),
+      map(utils.mapResponseData)
+    )
+  }
+
   /**
    * Gets the hand shapes
    * @returns Correlation id
    */
   public getHandShapes(): string {
-    return super.get('hand-shapes');
+    return super.get({ endpoint: 'hand-shapes', action: ServiceActions.Game.GET_HAND_SHAPES });
   }
 
   /**
@@ -21,7 +32,7 @@ export class GameService extends HttpService {
    * @returns Correlation id
    */
   public createMatch(): string {
-    return super.post('create-match');
+    return super.post({ endpoint: 'create-match', action: ServiceActions.Game.CREATE_MATCH });
   }
 
   /**
@@ -30,6 +41,6 @@ export class GameService extends HttpService {
    * @returns Correlation id
    */
   public fightRound(matchId: number, userShapeId: HAND_SHAPES): string {
-    return super.post(`${matchId}/fight-round`, userShapeId);
+    return super.post({ endpoint: `${matchId}/fight-round`, action: ServiceActions.Game.FIGHT_ROUND }, userShapeId);
   }
 }

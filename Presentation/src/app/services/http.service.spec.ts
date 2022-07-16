@@ -8,6 +8,7 @@ import { utils } from '../shared/util/utils';
 import { environment } from '../../environments/environment';
 import { testUtils } from '../shared/util/test-utils';
 import { hot } from 'jasmine-marbles';
+import { RestEndpointWithAction } from '../shared/interfaces/rest-url-action.interface';
 
 describe('HttpService', () => {
   let service: HttpService;
@@ -38,10 +39,10 @@ describe('HttpService', () => {
   });
 
   describe('.get(url)', () => {
-    const mockEndpoint = 'mock url';
+    const mockEndpointWithAction: RestEndpointWithAction = { endpoint: 'mock url', action: 'mock action' };
     it('should call the get with the correct url', () => {
-      service.get(mockEndpoint);
-      const expected = testUtils.buildUrl(BASE_URL, mockEndpoint)
+      service.get(mockEndpointWithAction);
+      const expected = testUtils.buildUrl(BASE_URL, mockEndpointWithAction.endpoint)
       expect(getSpy).toHaveBeenCalledWith(expected);
     });
 
@@ -50,7 +51,7 @@ describe('HttpService', () => {
       getSpy.and.returnValue(of(true).pipe(delay(500)));
 
       // Act
-      service.get(mockEndpoint);
+      service.get(mockEndpointWithAction);
 
       // Assert
       const expected = hot('a', { a: true })
@@ -63,10 +64,10 @@ describe('HttpService', () => {
       getSpy.and.returnValue(of(mockData));
 
       // Act
-      const requestId = service.get(mockEndpoint);
+      const requestId = service.get(mockEndpointWithAction);
 
       // Assert
-      const expected = hot('a', { a: { requestId, data: mockData } })
+      const expected = hot('a', { a: { requestId, action: mockEndpointWithAction.action, data: mockData } })
       expect(service.evtRestResponse$).toBeObservable(expected);
     });
 
@@ -76,10 +77,10 @@ describe('HttpService', () => {
       getSpy.and.returnValue(of(false).pipe(map(() => { throw mockHttpError })))
 
       // Act
-      const requestId = service.get(mockEndpoint);
+      const requestId = service.get(mockEndpointWithAction);
 
       // Assert
-      const expected = hot('a', { a: { requestId, error: mockHttpError } })
+      const expected = hot('a', { a: { requestId, action: mockEndpointWithAction.action, error: mockHttpError } })
       expect(service.evtRestResponse$).toBeObservable(expected);
     });
   })

@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, map, of, Subject, tap } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { environment } from '../../environments/environment';
 import { RestResponse } from '../shared/interfaces/rest-response.interface';
+import { RestEndpointWithAction } from '../shared/interfaces/rest-url-action.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class HttpService {
   /** Utility for optional spinner */
   public evtBusy$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /** Emits a request response */
-  public evtRestResponse$: BehaviorSubject<RestResponse<any>> = new BehaviorSubject({ requestId: 'init' });
+  public evtRestResponse$: BehaviorSubject<RestResponse<any>> = new BehaviorSubject({ requestId: 'init', action: 'init' });
 
   /** Queue of http requests */
   private requestQueue: string[] = [];
@@ -35,7 +36,7 @@ export class HttpService {
    * @param endpoint endpoint of the request
    * @returns correlation id of the request
    */
-  public get(endpoint: string) {
+  public get({ endpoint, action }: RestEndpointWithAction) {
     const requestId = uuid();
     this.requestQueue.push(requestId);
 
@@ -43,8 +44,8 @@ export class HttpService {
 
     this.httpClient.get(this.buildUrl(endpoint))
       .pipe(
-        map(data => this.onSuccessResponse(requestId, data)),
-        catchError(error => this.onErrorResponse(requestId, error))
+        map(data => this.onSuccessResponse(requestId, action, data)),
+        catchError(error => this.onErrorResponse(requestId,  action, error))
       )
       .subscribe();
 
@@ -57,7 +58,7 @@ export class HttpService {
    * @param data data to send on the body of the post request
    * @returns correlation id of the request
    */
-  public post(endpoint: string, data?: any) {
+  public post({ endpoint, action }: RestEndpointWithAction, data?: any) {
     const requestId = uuid();
     this.requestQueue.push(requestId);
 
@@ -65,10 +66,10 @@ export class HttpService {
 
     this.httpClient.post(this.buildUrl(endpoint), data)
       .pipe(
-        map(data => this.onSuccessResponse(requestId, data)),
-        catchError(error => this.onErrorResponse(requestId, error))
+        map(data => this.onSuccessResponse(requestId, action, data)),
+        catchError(error => this.onErrorResponse(requestId, action, error))
       )
-      .subscribe();
+      .subscribe(this.emitBusyStatus);
 
     return requestId;
   }
@@ -86,10 +87,13 @@ export class HttpService {
    * @param requestId Correlation id
    * @param data
    */
-  private onSuccessResponse = (requestId: string, data: any) => {
+  private onSuccessResponse = (requestId: string, action: string, data: any) => {
+    const restResponse: RestResponse<any> = { requestId, action, data };
+
     this.requestQueue = this.requestQueue.filter(id => id !== requestId);
-    this.evtRestResponse$.next({ requestId, data })
-    this.emitBusyStatus();
+    this.evtRestResponse$.next(restResponse);
+
+    return restResponse;
   }
 
   /**
@@ -98,12 +102,11 @@ export class HttpService {
    * @param error HttpError
    * @returns The error response
    */
-  private onErrorResponse = (requestId: string, error: HttpErrorResponse) => {
-    const restResponse: RestResponse<any> = { requestId, error };
+  private onErrorResponse = (requestId: string, action: string, error: HttpErrorResponse) => {
+    const restResponse: RestResponse<any> = { requestId, action, error };
 
     this.requestQueue = this.requestQueue.filter(id => id !== requestId);
-    this.evtRestResponse$.next({ requestId, error })
-    this.emitBusyStatus();
+    this.evtRestResponse$.next(restResponse)
 
     return of(restResponse);
   }

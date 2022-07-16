@@ -1,3 +1,4 @@
+<p>Current match id: {{currentMatchId$|async}}</p>
 <table class="table">
   <thead>
     <tr>
@@ -16,32 +17,32 @@
       </td>
       <td>
         <div>
-          {{matchMetrics.victoryRate|percent}}
+          {{currentMatchMetrics.victoryRate|percent}}
         </div>
         <div>
-          {{matchMetrics.victories}}/{{matchMetrics.roundsPlayed}}
-        </div>
-      </td>
-      <td>
-        <div>
-          {{matchMetrics.lossRate|percent}}
-        </div>
-        <div>
-          {{matchMetrics.losses}}/{{matchMetrics.roundsPlayed}}
+          {{currentMatchMetrics.victories}}/{{currentMatchMetrics.roundsPlayed}}
         </div>
       </td>
       <td>
         <div>
-          {{matchMetrics.tieRate|percent}}
+          {{currentMatchMetrics.lossRate|percent}}
         </div>
         <div>
-          {{matchMetrics.ties}}/{{matchMetrics.roundsPlayed}}
+          {{currentMatchMetrics.losses}}/{{currentMatchMetrics.roundsPlayed}}
+        </div>
+      </td>
+      <td>
+        <div>
+          {{currentMatchMetrics.tieRate|percent}}
+        </div>
+        <div>
+          {{currentMatchMetrics.ties}}/{{currentMatchMetrics.roundsPlayed}}
         </div>
       </td>
       <td>
         <div>&nbsp;</div>
         <div>
-          {{matchMetrics.roundsPlayed}}
+          {{currentMatchMetrics.roundsPlayed}}
         </div>
       </td>
     </tr>

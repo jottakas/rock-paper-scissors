@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import rock.paper.scissors.business.MetricsService;
+import rock.paper.scissors.business.api.MetricsService;
 import rock.paper.scissors.business.domain.MatchDto;
 
 @RestController

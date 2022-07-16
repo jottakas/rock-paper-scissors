@@ -7,6 +7,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 
+import rock.paper.scissors.business.api.GameService;
 import rock.paper.scissors.business.domain.FightRoundResultDto;
 import rock.paper.scissors.business.domain.FightRoundResultDtoBuilder;
 import rock.paper.scissors.business.domain.handShapes.HandShapeDto;
@@ -23,14 +24,14 @@ import rock.paper.scissors.utils.Constants;
 import rock.paper.scissors.utils.Utils;
 
 @Service
-public class GameService {
+public class GameServiceImpl implements GameService {
 
   private final HandShapeRepository handShapeRepository;
   private final MatchRepository matchRepository;
   private final FightRoundResultRepository fightRoundResultRepository;
   private final DdFightRoundResultRepository ddFightRoundResultRepository;
 
-  public GameService(HandShapeRepository handShapeRepository, MatchRepository matchRepository,
+  public GameServiceImpl(HandShapeRepository handShapeRepository, MatchRepository matchRepository,
       FightRoundResultRepository fightRoundResultRepository,
       DdFightRoundResultRepository ddFightRoundResultRepository) {
     this.handShapeRepository = handShapeRepository;

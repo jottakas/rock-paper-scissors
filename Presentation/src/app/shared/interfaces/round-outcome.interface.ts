@@ -1,7 +1,7 @@
 import { DD_FIGHT_ROUND_RESULT } from '../enums/dd-fight-round-result.enum';
 import { HAND_SHAPES } from "../enums/hand-shapes.enum";
 
-export interface FightRoundResult {
+export interface RoundOutcome {
     /** User Shape chosen by the computer */
     userShapeId?: HAND_SHAPES;
     /** Shape chosen by the computer */

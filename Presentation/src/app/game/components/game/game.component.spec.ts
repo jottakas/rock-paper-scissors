@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { GameService } from '../../../services/game.service';
 import { ServiceActions } from '../../../services/service-actions';
 import { HAND_SHAPES } from '../../../shared/enums/hand-shapes.enum';
-import { FightRoundResult } from '../../../shared/interfaces/fight-round-result.interface';
+import { RoundOutcome } from '../../../shared/interfaces/round-outcome.interface';
 import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
 
 import { GameComponent } from './game.component';
@@ -108,7 +108,7 @@ describe('GameComponent', () => {
           return (container.nativeElement as HTMLElement).textContent?.toLowerCase();
         };
         it('should display the tie', () => {
-          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: true, isUserVictory: false }
+          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Rock, isTie: true, isUserVictory: false }
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
@@ -119,7 +119,7 @@ describe('GameComponent', () => {
           expect(result).toContain('tie')
         })
         it('should display the victory', () => {
-          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: true }
+          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: true }
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
@@ -130,7 +130,7 @@ describe('GameComponent', () => {
           expect(result).toContain('victory')
         })
         it('should display the loss', () => {
-          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: false }
+          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: false }
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
@@ -142,7 +142,7 @@ describe('GameComponent', () => {
         })
 
         it('should display the user shape', () => {
-          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
+          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
@@ -155,7 +155,7 @@ describe('GameComponent', () => {
           expect(iconClass).toContain(rockClass)
         })
         it('should display the CPU shape', () => {
-          const mockResult: FightRoundResult = { cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
+          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });

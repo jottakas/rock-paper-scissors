@@ -15,5 +15,5 @@ export const utils = {
     isArrayNotEmpty,
     unsubscribe,
     isResponseWithData: (response: RestResponse<any>) => isNotNullNorUndefined(response) && isNotNullNorUndefined(response.data),
-    mapResponseData: (response: RestResponse<any>) =>response.data,
+    mapResponseData: <T>(response: RestResponse<T>): T => response.data as T,
 }

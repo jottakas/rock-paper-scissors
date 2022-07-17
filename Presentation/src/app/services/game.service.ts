@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs';
 import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
+import { HandShape } from '../shared/interfaces/hand-shape.interface';
+import { RoundOutcome } from '../shared/interfaces/round-outcome.interface';
 import { utils } from '../shared/util/utils';
 import { HttpService } from './http.service';
 import { ServiceActions } from './service-actions';
@@ -13,9 +15,17 @@ export class GameService extends HttpService {
 
   /** Selectors for the different events */
   public selectors = {
+    selectHandShapes: this.evtRestResponse$.pipe(
+      filter(response => response.action === ServiceActions.Game.GET_HAND_SHAPES),
+      map(response => utils.mapResponseData<HandShape[]>(response))
+    ),
     selectMatchId: this.evtRestResponse$.pipe(
       filter(response => response.action === ServiceActions.Game.CREATE_MATCH),
-      map(utils.mapResponseData)
+      map(response => utils.mapResponseData<number>(response))
+    ),
+    selectRoundOutcome: this.evtRestResponse$.pipe(
+      filter(response => response.action === ServiceActions.Game.FIGHT_ROUND),
+      map(response => utils.mapResponseData<RoundOutcome>(response)),
     )
   }
 

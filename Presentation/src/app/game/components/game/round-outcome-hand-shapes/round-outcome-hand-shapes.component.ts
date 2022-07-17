@@ -12,11 +12,11 @@ import { RoundOutcome } from '../../../../shared/interfaces/round-outcome.interf
 export class RoundOutcomeHandShapesComponent implements OnInit {
 
   @Input() currentRound!: number;
-  @Input() cpuHandShape?: HandShape;
-  @Input() userHandShape?: HandShape;
   @Input() roundOutcome?: RoundOutcome;
 
   roundOutcome$ = this.gameService.selectors.selectRoundOutcome;
+  userHandShape$ = this.gameService.selectors.selectUserHandShape;
+  cpuHandShape$ = this.gameService.selectors.selectCpuHandShape;
 
   constructor(private readonly gameService: GameService) { }
 

@@ -9,7 +9,7 @@
     <h3>User selection</h3>
     <div id="user-selected-shape">
       <app-hand-shape [isDisabled]="true"
-        [handShape]="userHandShape || undefined">
+        [handShape]="(userHandShape$|async)!">
       </app-hand-shape>
     </div>
   </div>
@@ -25,8 +25,8 @@
   <div class="col-12 col-md-4 text-left text-md-right">
     <div id="cpu-selected-shape ">
       <h3>CPU Selection</h3>
-      <div class="ml-0 ml-md-auto">
-        <ng-container *ngIf="cpuHandShape; else waitingForUser">
+      <div id="cpu-selected-shape" class="ml-0 ml-md-auto">
+        <ng-container *ngIf="(cpuHandShape$|async)! as cpuHandShape; else waitingForUser">
           <app-hand-shape [isDisabled]="true"
             [handShape]="cpuHandShape">
           </app-hand-shape>

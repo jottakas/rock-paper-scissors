@@ -10,6 +10,13 @@ import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
 
 import { GameComponent } from './game.component';
 import { HandShapeComponent } from './hand-shape/hand-shape.component';
+import { hot } from 'jasmine-marbles';
+import { UserHandShapeInputComponent } from './user-hand-shape-input/user-hand-shape-input.component';
+import { UserRoundsPerMatchInputComponent } from './user-rounds-per-match-input/user-rounds-per-match-input.component';
+import { RoundOutcomeHandShapesComponent } from './round-outcome-hand-shapes/round-outcome-hand-shapes.component';
+import { FormsModule } from '@angular/forms';
+import { DD_OUTCOME } from '../../../shared/enums/dd-outcome.enum';
+import { OutcomeComponent } from './outcome/outcome.component';
 
 describe('GameComponent', () => {
   let component: GameComponent;
@@ -21,22 +28,51 @@ describe('GameComponent', () => {
   const fightRoundMockId = 'fight round mock id';
 
   beforeEach(async () => {
-    gameServiceSpy = jasmine.createSpyObj('Game Service', ['getHandShapes', 'createMatch', 'fightRound'], { 'evtRestResponse$': new Subject() });
-    gameServiceSpy.getHandShapes.and.returnValue(getHandShapesMockId)
-    gameServiceSpy.createMatch.and.returnValue(createMatchMockId)
-    gameServiceSpy.fightRound.and.returnValue(fightRoundMockId)
+    // gameServiceSpy = jasmine.createSpyObj(
+    //   'Game Service',
+    //   ['getHandShapes', 'createMatch', 'fightRound'],
+    //   {
+    //     'evtRestResponse$': new Subject(),
+    //     // 'selectors': {
+    //     //   selectHandShapes: new Subject(),
+    //     //   selectMatchId: new Subject(),
+    //     //   selectRoundOutcome: new Subject(),
+    //     //   selectUserHandShape: new Subject(),
+    //     //   selectCpuHandShape: new Subject(),
+    //     // }
+    //   }
+    // );
+    // gameServiceSpy.getHandShapes.and.returnValue(getHandShapesMockId)
+    // gameServiceSpy.createMatch.and.returnValue(createMatchMockId)
+    // gameServiceSpy.fightRound.and.returnValue(fightRoundMockId)
 
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [GameComponent, HandShapeComponent],
+      imports: [HttpClientTestingModule, FormsModule],
+      declarations: [
+        GameComponent,
+        HandShapeComponent,
+        UserHandShapeInputComponent,
+        UserRoundsPerMatchInputComponent,
+        RoundOutcomeHandShapesComponent,
+        OutcomeComponent
+      ],
+      // providers: [
+      //   {
+      //     provide: GameService,
+      //     useValue: gameServiceSpy
+      //   }
+      // ]
       providers: [
-        {
-          provide: GameService,
-          useValue: gameServiceSpy
-        }
+        GameService
       ]
     })
       .compileComponents();
+
+    const gameService = TestBed.inject(GameService);
+    gameServiceSpy = spyOnAllFunctions(gameService, true);
+    gameServiceSpy.getHandShapes.and.returnValue(getHandShapesMockId)
+    gameServiceSpy.createMatch.and.returnValue(createMatchMockId)
+    gameServiceSpy.fightRound.and.returnValue(fightRoundMockId)
 
     fixture = TestBed.createComponent(GameComponent);
     component = fixture.componentInstance;
@@ -104,11 +140,11 @@ describe('GameComponent', () => {
 
       describe('Display result', () => {
         const getResultContent = () => {
-          const container = fixture.debugElement.query(By.css('#round-outcome'))
+          const container = fixture.debugElement.query(By.css('#round-outcome .outcome'))
           return (container.nativeElement as HTMLElement).textContent?.toLowerCase();
         };
         it('should display the tie', () => {
-          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Rock, isTie: true, isUserVictory: false }
+          const mockResult: RoundOutcome = { userShapeId: HAND_SHAPES.Rock, cpuShapeId: HAND_SHAPES.Rock, isTie: true, isUserVictory: false, resultDto: { id: DD_OUTCOME.Tie } }
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
@@ -119,10 +155,10 @@ describe('GameComponent', () => {
           expect(result).toContain('tie')
         })
         it('should display the victory', () => {
-          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: true }
+          const mockResult: RoundOutcome = { userShapeId: HAND_SHAPES.Paper, cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: true, resultDto: { id: DD_OUTCOME.Victory } }
           const matchId = 1;
 
-          component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
+          component.fightRound(matchId, { id: HAND_SHAPES.Paper, name: 'Paper' });
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
@@ -130,10 +166,10 @@ describe('GameComponent', () => {
           expect(result).toContain('victory')
         })
         it('should display the loss', () => {
-          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: false }
+          const mockResult: RoundOutcome = { userShapeId: HAND_SHAPES.Scissors, cpuShapeId: HAND_SHAPES.Rock, isTie: false, isUserVictory: false, resultDto: { id: DD_OUTCOME.Loss } }
           const matchId = 1;
 
-          component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
+          component.fightRound(matchId, { id: HAND_SHAPES.Scissors, name: 'Rock' });
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
@@ -142,7 +178,7 @@ describe('GameComponent', () => {
         })
 
         it('should display the user shape', () => {
-          const mockResult: RoundOutcome = { cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
+          const mockResult: RoundOutcome = { userShapeId: HAND_SHAPES.Rock, cpuShapeId: HAND_SHAPES.Paper, isTie: true, isUserVictory: false }
           const matchId = 1;
 
           component.fightRound(matchId, { id: HAND_SHAPES.Rock, name: 'Rock' });
@@ -162,7 +198,7 @@ describe('GameComponent', () => {
           gameServiceSpy.evtRestResponse$.next({ requestId: fightRoundMockId, action: ServiceActions.Game.FIGHT_ROUND, data: mockResult });
           fixture.detectChanges();
 
-          const icon = fixture.debugElement.query(By.css('#user-selected-shape i'))
+          const icon = fixture.debugElement.query(By.css('#cpu-selected-shape i'))
           const iconClass = (icon.nativeElement as HTMLElement).className;
           const paperClass = 'fa-hand';
           expect(iconClass).toContain(paperClass)

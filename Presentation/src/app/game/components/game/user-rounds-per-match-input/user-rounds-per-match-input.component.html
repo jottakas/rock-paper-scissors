@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-12">
+    <span>How many rounds do you want to play per match?</span>
+    <div>Current rounds per match: {{currentRoundsPerMatch}}</div>
+
+    <form #roundsForm="ngForm">
+      <div class="form-group">
+        <label for="roundsPerMatch">New rounds per match</label>
+        <input class="form-control"
+          id="roundsPerMatch"
+          name="newRoundsPerMatch"
+          [(ngModel)]="newRoundsPerMatch"
+          type="number"
+          min="1"
+          required
+          placeholder="Rounds" />
+      </div>
+
+      <button class="btn btn-primary"
+        [disabled]="roundsForm.invalid"
+        (click)="evtChangeRoundsPerMatch.emit(newRoundsPerMatch)">
+        Change the rounds per match (reset stats)
+      </button>
+    </form>
+  </div>
+</div>

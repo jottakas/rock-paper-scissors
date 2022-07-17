@@ -1,39 +1,15 @@
 <h1>Rock Paper Scissors</h1>
 
-<div class="row">
-  <div class="col-12">
-    <span>How many rounds do you want to play per match?</span>
-    <div>Current rounds per match: {{currentRoundsPerMatch}}</div>
-
-    <form #roundsForm="ngForm">
-      <div class="form-group">
-        <label for="roundsPerMatch">New rounds per match</label>
-        <input type="number"
-          name="newRoundsPerMatch"
-          [(ngModel)]="newRoundsPerMatch"
-          min="1"
-          class="form-control"
-          id="roundsPerMatch"
-          placeholder="Rounds" />
-      </div>
-
-      <button class="btn btn-primary"
-        [disabled]="roundsForm.invalid"
-        (click)="changeRoundsPerMatch(newRoundsPerMatch)">
-        Change the rounds per match (reset stats)
-      </button>
-    </form>
-  </div>
-</div>
+<app-user-rounds-per-match-input [currentRoundsPerMatch]="roundsPerMatch"
+  (evtChangeRoundsPerMatch)="changeRoundsPerMatch($event)">
+</app-user-rounds-per-match-input>
 
 <!-- User needs to select an action -->
-<app-user-hand-shape-input *ngIf="{matchId: matchId$|async, handShapes: handShapes$|async} as data"
-  [matchId]="data.matchId!"
-  [handShapes]="data.handShapes!"
+<app-user-hand-shape-input *ngIf="matchId$|async as matchId"
   [isMatchFinished]="matchResult !== undefined"
   [currentRound]="currentRound"
-  [roundsPerMatch]="currentRoundsPerMatch"
-  (evtShapeSelected)="fightRound(data.matchId!, $event)"
+  [roundsPerMatch]="roundsPerMatch"
+  (evtShapeSelected)="fightRound(matchId, $event)"
   (evtNewMatch)="createMatch()">
 </app-user-hand-shape-input>
 <!-- END User needs to select an action -->
@@ -41,8 +17,7 @@
 <!-- Shapes outcome of the round -->
 <app-round-outcome-hand-shapes [userSelectedShape]="userSelectedShape"
   [cpuHandShape]="(cpuHandShape$|async)!"
-  [currentRound]="currentRound"
-  [roundOutcome]="(roundOutcome$|async)!">
+  [currentRound]="currentRound">
 </app-round-outcome-hand-shapes>
 <!-- END Shapes outcome of the round -->
 
@@ -57,7 +32,7 @@
     [class.outcome-win]="roundOutcome.isUserVictory"
     [class.outcome-loss]="!roundOutcome.isTie && !roundOutcome.isUserVictory"
     class="outcome p-1 pl-3 pr-3">
-    {{roundOutcome.isTie ? 'Tie' : (roundOutcome.isUserVictory ? 'Victory' : 'Loss')}}
+    {{outcomeToString(roundOutcome.resultDto!.id)}}
   </span>
   <ng-template #outcomePending>
     <span class="outcome p-1 pl-3 pr-3">-</span>
@@ -72,11 +47,11 @@
   <span class="pt-1 pb-1">
     Match {{matchId$|async}} outcome:
   </span>
-  <span [class.outcome-tie]="matchResult === DD_FIGHT_ROUND_RESULT.Tie"
-    [class.outcome-win]="matchResult === DD_FIGHT_ROUND_RESULT.Victory"
-    [class.outcome-loss]="matchResult === DD_FIGHT_ROUND_RESULT.Loss"
+  <span [class.outcome-tie]="matchResult === ROUND_OUTCOME.Tie"
+    [class.outcome-win]="matchResult === ROUND_OUTCOME.Victory"
+    [class.outcome-loss]="matchResult === ROUND_OUTCOME.Loss"
     class="outcome p-1 pl-3 pr-3">
-    {{matchResultToString(matchResult)}}
+    {{outcomeToString(matchResult)}}
   </span>
   <ng-template #outcomePending>
     <span class="outcome p-1 pl-3 pr-3">-</span>

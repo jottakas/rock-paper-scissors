@@ -15,7 +15,7 @@
   </div>
 
   <div class="col-12 col-md-4">
-    <div *ngIf="roundOutcome"
+    <div *ngIf="roundOutcome$|async as roundOutcome"
       class="flex-center h-100 w-100 justify-content-start justify-content-md-center"
       style="font-size: 72px">
       {{roundOutcome.isTie ? '-' : (roundOutcome.isUserVictory ? '>' : '<')}}

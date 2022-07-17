@@ -38,13 +38,12 @@ export class GameComponent implements OnInit, OnDestroy {
   )
 
   /** Current rounds per match */
-  currentRoundsPerMatch = 5;
-  /** User input to modify the current rounds per match */
-  newRoundsPerMatch = this.currentRoundsPerMatch;
+  roundsPerMatch = 5;
   /** Current round playing */
   currentRound: number = 1;
 
-  public readonly DD_FIGHT_ROUND_RESULT = ROUND_OUTCOME;
+  public readonly ROUND_OUTCOME = ROUND_OUTCOME;
+  public readonly outcomeToString = utils.outcomeToString;
   matchResult?: ROUND_OUTCOME;
 
   /** Store the round results to display the final result */
@@ -83,7 +82,7 @@ export class GameComponent implements OnInit, OnDestroy {
   changeRoundsPerMatch(newRoundsPerMatch: number) {
     const isConfirmed = confirm('Do you want to start another match? You will not see the current stats anymore although they are still in the database')
     if (isConfirmed) {
-      this.currentRoundsPerMatch = newRoundsPerMatch;
+      this.roundsPerMatch = newRoundsPerMatch;
       this.createMatch();
       alert('Rounds changed')
     }
@@ -113,20 +112,18 @@ export class GameComponent implements OnInit, OnDestroy {
     const fightResult = fightRoundResult.isTie ? TIE : fightRoundResult.isUserVictory ? VICTORY : LOSS;
     this.roundResults.push(fightResult);
 
-    const minRoundsToWin = Math.floor(this.currentRoundsPerMatch / 2) + 1;
+    const minRoundsToWin = Math.floor(this.roundsPerMatch / 2) + 1;
 
     const userVictories = this.roundResults.filter(r => r === VICTORY).length;
     const cpuVictories = this.roundResults.filter(r => r === LOSS).length;
 
-    const isMatchFinished = this.currentRound > this.currentRoundsPerMatch ||
+    const isMatchFinished = this.currentRound > this.roundsPerMatch ||
       userVictories >= minRoundsToWin || cpuVictories >= minRoundsToWin;
 
     this.matchResult = undefined;
     if (isMatchFinished) {
       this.matchResult = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
-      setTimeout(() => alert(`Match outcome: ${this.matchResultToString(this.matchResult!)}`))
+      setTimeout(() => alert(`Match outcome: ${this.outcomeToString(this.matchResult!)}`))
     }
   }
-
-  public matchResultToString = (result: ROUND_OUTCOME) => result === ROUND_OUTCOME.Tie ? 'Tie' : result === ROUND_OUTCOME.Victory ? 'Victory' : 'Loss'
 }

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RoundOutcome } from '../../../../shared/interfaces/round-outcome.interface';
+import { GameService } from '../../../../services/game.service';
 import { HandShape } from '../../../../shared/interfaces/hand-shape.interface';
+import { RoundOutcome } from '../../../../shared/interfaces/round-outcome.interface';
 
 @Component({
   selector: 'app-round-outcome-hand-shapes',
@@ -15,7 +16,9 @@ export class RoundOutcomeHandShapesComponent implements OnInit {
   @Input() userSelectedShape?: HandShape;
   @Input() roundOutcome?: RoundOutcome;
 
-  constructor() { }
+  roundOutcome$ = this.gameService.selectors.selectRoundOutcome;
+
+  constructor(private readonly gameService: GameService) { }
 
   ngOnInit(): void {
   }

@@ -6,7 +6,7 @@
     <h2 *ngIf="isMatchFinished">
       Match finished!
     </h2>
-    <div *ngFor="let handShape of handShapes"
+    <div *ngFor="let handShape of handShapes$|async"
       id="user-hand-shapes"
       class="d-inline-block mr-3">
       <app-hand-shape [handShape]="handShape"

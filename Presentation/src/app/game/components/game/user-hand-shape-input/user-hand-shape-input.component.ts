@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { GameService } from '../../../../services/game.service';
 import { HandShape } from '../../../../shared/interfaces/hand-shape.interface';
 
 @Component({
@@ -9,8 +10,6 @@ import { HandShape } from '../../../../shared/interfaces/hand-shape.interface';
 })
 export class UserHandShapeInputComponent implements OnInit {
 
-  @Input() matchId!: number;
-  @Input() handShapes!: HandShape[];
   @Input() isMatchFinished: boolean = false;
   @Input() currentRound: number = 1;
   @Input() roundsPerMatch: number = 5;
@@ -18,7 +17,9 @@ export class UserHandShapeInputComponent implements OnInit {
   @Output() evtShapeSelected: EventEmitter<HandShape> = new EventEmitter();
   @Output() evtNewMatch: EventEmitter<void> = new EventEmitter();
 
-  constructor() { }
+  handShapes$ = this.gameService.selectors.selectHandShapes;
+
+  constructor(private readonly gameService: GameService) { }
 
   ngOnInit(): void {
   }

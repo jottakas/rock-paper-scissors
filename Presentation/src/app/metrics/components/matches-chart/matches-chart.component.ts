@@ -79,9 +79,16 @@ export class MatchesChartComponent extends ComponentWithSubscriptions {
       .domain([0, 1])
       .range([height, 0]);
 
+    // Make the y integer values
+    const yAxisTicks = y.ticks()
+      .filter(tick => Number.isInteger(tick));
+
     // Draw the Y-axis on the DOM
     this.yAxis = this.svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y)
+        .tickValues(yAxisTicks)
+        .tickFormat(d3.format('d'))
+      );
   }
 
   private updateChart = ([matches, handShapes]: [MatchOutcome[], HandShape[]]) => {
@@ -127,9 +134,17 @@ export class MatchesChartComponent extends ComponentWithSubscriptions {
       .domain([0, maxY])
       .range([height, 0]);
 
+    // Make the y integer values
+    const yAxisTicks = y.ticks()
+      .filter(tick => Number.isInteger(tick));
+
     // Draw the Y-axis on the DOM
     this.yAxis
-      .call(d3.axisLeft(y));
+      .call(
+        d3.axisLeft(y)
+          .tickValues(yAxisTicks)
+          .tickFormat(d3.format('d'))
+      );
 
     // Create and fill the bars
     this.svg.selectAll("bars")

@@ -12,12 +12,12 @@ import rock.paper.scissors.business.domain.RoundOutcomeDto;
 import rock.paper.scissors.business.domain.RoundOutcomeDtoBuilder;
 import rock.paper.scissors.business.domain.handShapes.HandShapeDto;
 import rock.paper.scissors.business.domain.mappers.MapperCache;
-import rock.paper.scissors.data.DdFightRoundResultRepository;
-import rock.paper.scissors.data.FightRoundResultRepository;
+import rock.paper.scissors.data.DdRoundOutcomeRepository;
+import rock.paper.scissors.data.RoundOutcomeRepository;
 import rock.paper.scissors.data.HandShapeRepository;
 import rock.paper.scissors.data.MatchRepository;
-import rock.paper.scissors.data.entities.DdFightRoundResult;
-import rock.paper.scissors.data.entities.FightRoundResult;
+import rock.paper.scissors.data.entities.DdRoundOutcome;
+import rock.paper.scissors.data.entities.RoundOutcome;
 import rock.paper.scissors.data.entities.HandShape;
 import rock.paper.scissors.data.entities.Match;
 import rock.paper.scissors.utils.Constants;
@@ -28,15 +28,15 @@ public class GameServiceImpl implements GameService {
 
   private final HandShapeRepository handShapeRepository;
   private final MatchRepository matchRepository;
-  private final FightRoundResultRepository fightRoundResultRepository;
-  private final DdFightRoundResultRepository ddFightRoundResultRepository;
+  private final RoundOutcomeRepository roundOutcomeRepository;
+  private final DdRoundOutcomeRepository ddFightRoundResultRepository;
 
   public GameServiceImpl(HandShapeRepository handShapeRepository, MatchRepository matchRepository,
-      FightRoundResultRepository fightRoundResultRepository,
-      DdFightRoundResultRepository ddFightRoundResultRepository) {
+      RoundOutcomeRepository roundOutcomeRepository,
+      DdRoundOutcomeRepository ddFightRoundResultRepository) {
     this.handShapeRepository = handShapeRepository;
     this.matchRepository = matchRepository;
-    this.fightRoundResultRepository = fightRoundResultRepository;
+    this.roundOutcomeRepository = roundOutcomeRepository;
     this.ddFightRoundResultRepository = ddFightRoundResultRepository;
   }
 
@@ -70,7 +70,7 @@ public class GameServiceImpl implements GameService {
         .orElseThrow(() -> new EntityNotFoundException(userShapeId));
 
     HandShapeDto cpuDto = MapperCache.handShapeMapper.mapFrom(cpuHandShape);
-    RoundOutcomeDto result = processFightRoundResult(userShapeId, cpuDto.getId());
+    RoundOutcomeDto result = buildRoundOutcome(userShapeId, cpuDto.getId());
 
     saveMetric(matchId, userShapeId, cpuDto.getId(), result);
 
@@ -84,11 +84,11 @@ public class GameServiceImpl implements GameService {
    * @param cpuShapeId
    * @return fight round result
    */
-  private RoundOutcomeDto processFightRoundResult(String userShapeId, String cpuShapeId) {
+  private RoundOutcomeDto buildRoundOutcome(String userShapeId, String cpuShapeId) {
     boolean isTie = userShapeId.equals(cpuShapeId);
 
     // Assume it's a loss
-    RoundOutcomeDtoBuilder roundOutcomeBuilder = new RoundOutcomeDtoBuilder(cpuShapeId)
+    RoundOutcomeDtoBuilder roundOutcomeBuilder = new RoundOutcomeDtoBuilder(userShapeId, cpuShapeId)
         .withUserLoss();
 
     if (isTie) {
@@ -106,32 +106,32 @@ public class GameServiceImpl implements GameService {
   private void saveMetric(long matchId, String userHandShapeId, String cpuHandShapeId,
       RoundOutcomeDto fightResultDto) {
 
-    FightRoundResult fightResult = new FightRoundResult();
-    fightResult.setUserHandShapeId(userHandShapeId);
-    fightResult.setCpuHandShapeId(cpuHandShapeId);
-    fightResult.setDate(new Date());
+    RoundOutcome roundOutcome = new RoundOutcome();
+    roundOutcome.setUserHandShapeId(userHandShapeId);
+    roundOutcome.setCpuHandShapeId(cpuHandShapeId);
+    roundOutcome.setDate(new Date());
 
     Match match = matchRepository.findById(matchId).orElseThrow();
-    fightResult.setMatch(match);
+    roundOutcome.setMatch(match);
 
     // Increment the roound number by one
     int roundNumber = match.getFightRoundResult().size() + 1;
-    fightResult.setRoundNumber(roundNumber);
+    roundOutcome.setRoundNumber(roundNumber);
 
-    DdFightRoundResult ddFightRoundResult = resolveDdFightRoundResult(fightResultDto);
-    fightResult.setDdFightRoundResult(ddFightRoundResult);
+    DdRoundOutcome ddRoundOutcome = resolveDdFightRoundResult(fightResultDto);
+    roundOutcome.setDdRoundOutcome(ddRoundOutcome);
 
-    fightRoundResultRepository.save(fightResult);
+    roundOutcomeRepository.save(roundOutcome);
   }
 
   /** Retrieves the corresponding fight result entity based on the result DTO */
-  private DdFightRoundResult resolveDdFightRoundResult(RoundOutcomeDto fightResultDto) {
+  private DdRoundOutcome resolveDdFightRoundResult(RoundOutcomeDto fightResultDto) {
     String ddResultId = Constants.RoundOutcome.TIE;
     if (!fightResultDto.isTie()) {
       ddResultId = fightResultDto.isUserVictory() ? Constants.RoundOutcome.VICTORY
           : Constants.RoundOutcome.LOSS;
     }
-    DdFightRoundResult ddResult = ddFightRoundResultRepository.findById(ddResultId)
+    DdRoundOutcome ddResult = ddFightRoundResultRepository.findById(ddResultId)
         .orElseThrow(() -> new EntityNotFoundException());
 
     return ddResult;

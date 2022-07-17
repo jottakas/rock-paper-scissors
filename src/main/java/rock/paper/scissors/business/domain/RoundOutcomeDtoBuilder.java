@@ -8,15 +8,19 @@ public class RoundOutcomeDtoBuilder {
 
   /**
    * Builder constructor. The CPU selection is required
-   * @param cpuShapeId CPU selection
+   *
+   * @param userShapeId User selection
+   * @param cpuShapeId  CPU selection
    */
-  public RoundOutcomeDtoBuilder(String cpuShapeId) {
+  public RoundOutcomeDtoBuilder(String userShapeId, String cpuShapeId) {
     this.dto = new RoundOutcomeDto();
+    this.dto.setUserShapeId(userShapeId);
     this.dto.setCpuShapeId(cpuShapeId);
   }
 
   /**
    * A victory means that victory is true and tie is false
+   *
    * @return builder to keep building
    */
   public RoundOutcomeDtoBuilder withUserVictory() {
@@ -29,6 +33,7 @@ public class RoundOutcomeDtoBuilder {
 
   /**
    * A loss means that victory is false and tie is false
+   *
    * @return builder to keep building
    */
   public RoundOutcomeDtoBuilder withUserLoss() {
@@ -41,6 +46,7 @@ public class RoundOutcomeDtoBuilder {
 
   /**
    * A victory means that victory is false and tie is true
+   *
    * @return builder to keep building
    */
   public RoundOutcomeDtoBuilder withTie() {
@@ -53,6 +59,7 @@ public class RoundOutcomeDtoBuilder {
 
   /**
    * Builds the result
+   *
    * @return resulting DTO
    */
   public RoundOutcomeDto build() {

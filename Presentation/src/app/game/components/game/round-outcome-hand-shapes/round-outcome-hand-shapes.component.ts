@@ -13,7 +13,7 @@ export class RoundOutcomeHandShapesComponent implements OnInit {
 
   @Input() currentRound!: number;
   @Input() cpuHandShape?: HandShape;
-  @Input() userSelectedShape?: HandShape;
+  @Input() userHandShape?: HandShape;
   @Input() roundOutcome?: RoundOutcome;
 
   roundOutcome$ = this.gameService.selectors.selectRoundOutcome;

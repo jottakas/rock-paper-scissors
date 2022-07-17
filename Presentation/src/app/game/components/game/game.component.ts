@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Observable, Subscription, tap, withLatestFrom } from 'rxjs';
+import { filter, map, Observable, Subscription, withLatestFrom } from 'rxjs';
 import { GameService } from '../../../services/game.service';
-import { ServiceActions } from '../../../services/service-actions';
-import { ROUND_OUTCOME } from '../../../shared/enums/round-outcome.enum';
-import { RoundOutcome as RoundOutcome } from '../../../shared/interfaces/round-outcome.interface';
+import { DD_OUTCOME } from '../../../shared/enums/dd-outcome.enum';
 import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
+import { RoundOutcome } from '../../../shared/interfaces/round-outcome.interface';
 import { utils } from '../../../shared/util/utils';
 
 @Component({
@@ -23,13 +22,10 @@ export class GameComponent implements OnInit, OnDestroy {
   roundOutcome$ = this.gameService.selectors.selectRoundOutcome;
 
   /** Result of the CPU shape */
-  cpuHandShape$: Observable<HandShape | undefined> = this.roundOutcome$.pipe(
-    withLatestFrom(this.handShapes$),
-    map(([fightRoundResult, handShapes]) => handShapes.find(hs => hs.id === fightRoundResult.cpuShapeId))
-  )
+  cpuHandShape$ = this.gameService.selectors.selectCpuHandShape;
 
   /** Selection of the user to display */
-  userSelectedShape: HandShape | undefined;
+  userHandShape$ = this.gameService.selectors.selectUserHandShape;
 
   /** Possible server errors */
   errors$ = this.gameService.evtRestResponse$.pipe(
@@ -42,12 +38,10 @@ export class GameComponent implements OnInit, OnDestroy {
   /** Current round playing */
   currentRound: number = 1;
 
-  public readonly ROUND_OUTCOME = ROUND_OUTCOME;
-  public readonly outcomeToString = utils.outcomeToString;
-  matchResult?: ROUND_OUTCOME;
+  matchResult?: DD_OUTCOME;
 
   /** Store the round results to display the final result */
-  private roundResults: ROUND_OUTCOME[] = []
+  private roundResults: DD_OUTCOME[] = []
 
   /** Store the subscriptions to cleanup on destroy */
   private cleanupSubscriptions: Subscription[] = [];
@@ -98,17 +92,16 @@ export class GameComponent implements OnInit, OnDestroy {
   }
   /**
    * Send the user selection to fight the cpu
+   * @param matchId match id to fight the round
    * @param handShape user selection
    */
   fightRound(matchId: number, handShape: HandShape) {
     this.currentRound++;
-    this.userSelectedShape = handShape;
-
     this.gameService.fightRound(matchId, handShape.id);
   }
 
   private processFightRoundResult = (fightRoundResult: RoundOutcome) => {
-    const { Victory: VICTORY, Loss: LOSS, Tie: TIE } = ROUND_OUTCOME;
+    const { Victory: VICTORY, Loss: LOSS, Tie: TIE } = DD_OUTCOME;
     const fightResult = fightRoundResult.isTie ? TIE : fightRoundResult.isUserVictory ? VICTORY : LOSS;
     this.roundResults.push(fightResult);
 
@@ -117,13 +110,15 @@ export class GameComponent implements OnInit, OnDestroy {
     const userVictories = this.roundResults.filter(r => r === VICTORY).length;
     const cpuVictories = this.roundResults.filter(r => r === LOSS).length;
 
+    // The match is finished when the rounds are finished
+    // or someone has the minimum amount of wins
     const isMatchFinished = this.currentRound > this.roundsPerMatch ||
       userVictories >= minRoundsToWin || cpuVictories >= minRoundsToWin;
 
     this.matchResult = undefined;
     if (isMatchFinished) {
       this.matchResult = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
-      setTimeout(() => alert(`Match outcome: ${this.outcomeToString(this.matchResult!)}`))
+      setTimeout(() => alert(`Match outcome: ${utils.outcomeToString(this.matchResult!)}`))
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Subscription } from "rxjs";
-import { ROUND_OUTCOME } from '../enums/round-outcome.enum';
+import { DD_OUTCOME } from '../enums/dd-outcome.enum';
 import { RestResponse } from '../interfaces/rest-response.interface';
 
 type NullUndefined = null | undefined;
@@ -17,6 +17,6 @@ export const utils = {
     unsubscribe,
     isResponseWithData: (response: RestResponse<any>) => isNotNullNorUndefined(response) && isNotNullNorUndefined(response.data),
     mapResponseData: <T>(response: RestResponse<T>): T => response.data as T,
-    outcomeToString: (result: ROUND_OUTCOME) => result === ROUND_OUTCOME.Tie ? 'Tie' : result === ROUND_OUTCOME.Victory ? 'Victory' : 'Loss'
+    outcomeToString: (result: DD_OUTCOME) => result === DD_OUTCOME.Tie ? 'Tie' : result === DD_OUTCOME.Victory ? 'Victory' : 'Loss'
 
 }

@@ -10,13 +10,13 @@ import javax.persistence.OneToMany;
  * Dictionary to represent the three result states: win 1 lose 2 tie 3
  */
 @Entity
-public class DdFightRoundResult {
+public class DdRoundOutcome {
   @Id
   private String id;
   private String name;
 
-  @OneToMany(mappedBy = "ddFightRoundResult")
-  private Set<FightRoundResult> fightRoundResult;
+  @OneToMany(mappedBy = "ddRoundOutcome")
+  private Set<RoundOutcome> roundOutcomes;
 
   public String getId() {
     return id;
@@ -34,11 +34,12 @@ public class DdFightRoundResult {
     this.name = name;
   }
 
-  public Set<FightRoundResult> getFightRoundResult() {
-    return fightRoundResult;
+  public Set<RoundOutcome> getRoundOutcomes() {
+    return roundOutcomes;
   }
 
-  public void setFightRoundResult(Set<FightRoundResult> fightRoundResult) {
-    this.fightRoundResult = fightRoundResult;
+  public void setRoundOutcomes(Set<RoundOutcome> roundOutcomes) {
+    this.roundOutcomes = roundOutcomes;
   }
+
 }

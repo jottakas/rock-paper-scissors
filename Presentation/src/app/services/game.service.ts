@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { filter, map } from 'rxjs';
+import { filter, map, withLatestFrom } from 'rxjs';
 import { HAND_SHAPES } from '../shared/enums/hand-shapes.enum';
 import { HandShape } from '../shared/interfaces/hand-shape.interface';
 import { RoundOutcome } from '../shared/interfaces/round-outcome.interface';
@@ -13,14 +13,28 @@ import { ServiceActions } from './service-actions';
 export class GameService extends HttpService {
   protected override readonly apiUrl = 'rock-paper-scissors';
 
+  private readonly selectHandShapes = this.createSelector<HandShape[]>(ServiceActions.Game.GET_HAND_SHAPES);
+  private readonly selectMatchId = this.createSelector<number>(ServiceActions.Game.CREATE_MATCH);
+  private readonly selectRoundOutcome = this.createSelector<RoundOutcome>(ServiceActions.Game.FIGHT_ROUND);
+
   /** Selectors for the different events */
   public selectors = {
     /** Retrieve the possible hand shapes */
-    selectHandShapes: this.createSelector<HandShape[]>(ServiceActions.Game.GET_HAND_SHAPES),
+    selectHandShapes: this.selectHandShapes,
     /** Retrieve the created match id */
-    selectMatchId: this.createSelector<number>(ServiceActions.Game.CREATE_MATCH),
+    selectMatchId: this.selectMatchId,
     /** Retrieve the fight round result. Contains the cpu shape and the outcome */
-    selectRoundOutcome: this.createSelector<RoundOutcome>(ServiceActions.Game.FIGHT_ROUND),
+    selectRoundOutcome: this.selectRoundOutcome,
+    /** User hand shape selection */
+    selectUserHandShape: this.selectRoundOutcome.pipe(
+      withLatestFrom(this.selectHandShapes),
+      map(([fightRoundResult, handShapes]) => handShapes.find(hs => hs.id === fightRoundResult.userShapeId))
+    ),
+    /** CPU hand shape selection */
+    selectCpuHandShape: this.selectRoundOutcome.pipe(
+      withLatestFrom(this.selectHandShapes),
+      map(([fightRoundResult, handShapes]) => handShapes.find(hs => hs.id === fightRoundResult.cpuShapeId))
+    )
   }
 
   /**

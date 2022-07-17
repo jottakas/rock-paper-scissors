@@ -5,9 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import rock.paper.scissors.data.DdFightRoundResultRepository;
+import rock.paper.scissors.data.DdRoundOutcomeRepository;
 import rock.paper.scissors.data.HandShapeRepository;
-import rock.paper.scissors.data.entities.DdFightRoundResult;
+import rock.paper.scissors.data.entities.DdRoundOutcome;
 import rock.paper.scissors.data.entities.HandShape;
 
 @SpringBootApplication
@@ -19,7 +19,7 @@ public class RockPaperScissorsApplication {
 
     @Bean
     CommandLineRunner init(HandShapeRepository handShapeRepository,
-            DdFightRoundResultRepository ddFightRoundResultRepository) {
+            DdRoundOutcomeRepository ddFightRoundResultRepository) {
         return args -> {
             // Not sure why the schema.sql is not running
             createHandShapes(handShapeRepository);
@@ -43,14 +43,14 @@ public class RockPaperScissorsApplication {
         repository.save(scissorsShape);
     }
 
-    private void createDdFightRoundResults(DdFightRoundResultRepository repository) {
-        DdFightRoundResult victory = new DdFightRoundResult();
+    private void createDdFightRoundResults(DdRoundOutcomeRepository repository) {
+        DdRoundOutcome victory = new DdRoundOutcome();
         victory.setId("1");
         victory.setName("Victory");
-        DdFightRoundResult loss = new DdFightRoundResult();
+        DdRoundOutcome loss = new DdRoundOutcome();
         loss.setId("2");
         loss.setName("Loss");
-        DdFightRoundResult tie = new DdFightRoundResult();
+        DdRoundOutcome tie = new DdRoundOutcome();
         tie.setId("3");
         tie.setName("Tie");
         repository.save(victory);

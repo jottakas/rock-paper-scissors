@@ -15,48 +15,22 @@
 <!-- END User needs to select an action -->
 
 <!-- Shapes outcome of the round -->
-<app-round-outcome-hand-shapes [userSelectedShape]="userSelectedShape"
+<app-round-outcome-hand-shapes [userHandShape]="(userHandShape$|async)!"
   [cpuHandShape]="(cpuHandShape$|async)!"
   [currentRound]="currentRound">
 </app-round-outcome-hand-shapes>
 <!-- END Shapes outcome of the round -->
 
 <!-- Round Result: Victory, loss or tie -->
-<div id="round-outcome"
-  class="h2 pt-3 pr-3 pb-3 border border-light">
-  <span class="pt-1 pb-1">
-    Round {{currentRound === 1? '?' : currentRound-1}} outcome:
-  </span>
-  <span *ngIf="roundOutcome$|async as roundOutcome; else outcomePending"
-    [class.outcome-tie]="roundOutcome.isTie"
-    [class.outcome-win]="roundOutcome.isUserVictory"
-    [class.outcome-loss]="!roundOutcome.isTie && !roundOutcome.isUserVictory"
-    class="outcome p-1 pl-3 pr-3">
-    {{outcomeToString(roundOutcome.resultDto!.id)}}
-  </span>
-  <ng-template #outcomePending>
-    <span class="outcome p-1 pl-3 pr-3">-</span>
-  </ng-template>
-</div>
+<app-outcome [outcome]="(roundOutcome$|async)?.resultDto?.id"
+  [header]="'Round ' + (currentRound === 1? '?' : currentRound-1)+ ' outcome:'">
+</app-outcome>
 <!-- END Round Result: Victory, loss or tie -->
 
 <!-- Match Result: Victory, loss or tie -->
-<div *ngIf="matchResult"
-  id="match-round-result"
-  class="h2 pt-3 pr-3 pb-3 border border-light">
-  <span class="pt-1 pb-1">
-    Match {{matchId$|async}} outcome:
-  </span>
-  <span [class.outcome-tie]="matchResult === ROUND_OUTCOME.Tie"
-    [class.outcome-win]="matchResult === ROUND_OUTCOME.Victory"
-    [class.outcome-loss]="matchResult === ROUND_OUTCOME.Loss"
-    class="outcome p-1 pl-3 pr-3">
-    {{outcomeToString(matchResult)}}
-  </span>
-  <ng-template #outcomePending>
-    <span class="outcome p-1 pl-3 pr-3">-</span>
-  </ng-template>
-</div>
+<app-outcome [outcome]="matchResult"
+  [header]="'Match id ' + (matchId$|async)+ ' outcome:'">
+</app-outcome>
 <!-- Match END Result: Victory, loss or tie -->
 
 <div class="h2 pt-3 pr-3 pb-3 border border-light">

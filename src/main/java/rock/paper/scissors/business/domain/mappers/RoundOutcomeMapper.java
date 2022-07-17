@@ -4,7 +4,7 @@ import rock.paper.scissors.business.domain.BaseDto;
 import rock.paper.scissors.business.domain.RoundOutcomeDto;
 import rock.paper.scissors.data.entities.RoundOutcome;
 
-public class FightRoundResultMapper extends EntityToDtoMapper<RoundOutcome, RoundOutcomeDto> {
+public class RoundOutcomeMapper extends EntityToDtoMapper<RoundOutcome, RoundOutcomeDto> {
   /**
    * Maps an entity to a Data Transfer Object
    *

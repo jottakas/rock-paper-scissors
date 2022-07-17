@@ -26,7 +26,7 @@ public class RoundOutcomeDtoBuilder {
   public RoundOutcomeDtoBuilder withUserVictory() {
     this.dto.setUserVictory(true);
     this.dto.setTie(false);
-    this.dto.setResultDto(new BaseDto(Constants.RoundOutcome.VICTORY));
+    this.dto.setResultDto(new BaseDto(Constants.Outcome.VICTORY));
 
     return this;
   }
@@ -39,7 +39,7 @@ public class RoundOutcomeDtoBuilder {
   public RoundOutcomeDtoBuilder withUserLoss() {
     this.dto.setUserVictory(false);
     this.dto.setTie(false);
-    this.dto.setResultDto(new BaseDto(Constants.RoundOutcome.LOSS));
+    this.dto.setResultDto(new BaseDto(Constants.Outcome.LOSS));
 
     return this;
   }
@@ -52,7 +52,7 @@ public class RoundOutcomeDtoBuilder {
   public RoundOutcomeDtoBuilder withTie() {
     this.dto.setUserVictory(false);
     this.dto.setTie(true);
-    this.dto.setResultDto(new BaseDto(Constants.RoundOutcome.TIE));
+    this.dto.setResultDto(new BaseDto(Constants.Outcome.TIE));
 
     return this;
   }

@@ -126,10 +126,10 @@ public class GameServiceImpl implements GameService {
 
   /** Retrieves the corresponding fight result entity based on the result DTO */
   private DdRoundOutcome resolveDdFightRoundResult(RoundOutcomeDto fightResultDto) {
-    String ddResultId = Constants.RoundOutcome.TIE;
+    String ddResultId = Constants.Outcome.TIE;
     if (!fightResultDto.isTie()) {
-      ddResultId = fightResultDto.isUserVictory() ? Constants.RoundOutcome.VICTORY
-          : Constants.RoundOutcome.LOSS;
+      ddResultId = fightResultDto.isUserVictory() ? Constants.Outcome.VICTORY
+          : Constants.Outcome.LOSS;
     }
     DdRoundOutcome ddResult = ddFightRoundResultRepository.findById(ddResultId)
         .orElseThrow(() -> new EntityNotFoundException());

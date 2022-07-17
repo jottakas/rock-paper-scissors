@@ -5,7 +5,7 @@ package rock.paper.scissors.business.domain.mappers;
  */
 public class MapperCache {
   public static final HandShapeMapper handShapeMapper = new HandShapeMapper();
-  public static final FightRoundResultMapper fightRoundResultMapper = new FightRoundResultMapper();
+  public static final RoundOutcomeMapper fightRoundResultMapper = new RoundOutcomeMapper();
   public static final MatchMapper matchMapper = new MatchMapper();
 
 }

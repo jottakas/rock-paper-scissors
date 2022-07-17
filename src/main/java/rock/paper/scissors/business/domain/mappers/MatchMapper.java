@@ -2,7 +2,7 @@ package rock.paper.scissors.business.domain.mappers;
 
 import java.util.List;
 
-import rock.paper.scissors.business.domain.FightRoundResultDto;
+import rock.paper.scissors.business.domain.RoundOutcomeDto;
 import rock.paper.scissors.business.domain.MatchDto;
 import rock.paper.scissors.data.entities.Match;
 
@@ -19,7 +19,7 @@ public class MatchMapper extends EntityToDtoMapper<Match, MatchDto> {
 
     result.setId(entity.getId());
 
-    List<FightRoundResultDto> roundsDto = MapperCache.fightRoundResultMapper.mapListFrom(entity.getFightRoundResult());
+    List<RoundOutcomeDto> roundsDto = MapperCache.fightRoundResultMapper.mapListFrom(entity.getFightRoundResult());
     result.setRounds(roundsDto);
 
     return result;

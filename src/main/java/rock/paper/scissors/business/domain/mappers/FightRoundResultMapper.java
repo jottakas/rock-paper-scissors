@@ -1,10 +1,10 @@
 package rock.paper.scissors.business.domain.mappers;
 
 import rock.paper.scissors.business.domain.BaseDto;
-import rock.paper.scissors.business.domain.FightRoundResultDto;
+import rock.paper.scissors.business.domain.RoundOutcomeDto;
 import rock.paper.scissors.data.entities.FightRoundResult;
 
-public class FightRoundResultMapper extends EntityToDtoMapper<FightRoundResult, FightRoundResultDto> {
+public class FightRoundResultMapper extends EntityToDtoMapper<FightRoundResult, RoundOutcomeDto> {
   /**
    * Maps an entity to a Data Transfer Object
    *
@@ -12,8 +12,8 @@ public class FightRoundResultMapper extends EntityToDtoMapper<FightRoundResult, 
    * @return mapped dto
    */
   @Override
-  public FightRoundResultDto mapFrom(FightRoundResult entity) {
-    FightRoundResultDto result = new FightRoundResultDto();
+  public RoundOutcomeDto mapFrom(FightRoundResult entity) {
+    RoundOutcomeDto result = new RoundOutcomeDto();
 
     result.setUserShapeId(entity.getUserHandShapeId());
     result.setCpuShapeId(entity.getCpuHandShapeId());

@@ -1,4 +1,4 @@
-import { DD_FIGHT_ROUND_RESULT } from '../enums/dd-fight-round-result.enum';
+import { ROUND_OUTCOME } from '../enums/round-outcome.enum';
 import { HAND_SHAPES } from "../enums/hand-shapes.enum";
 
 export interface RoundOutcome {
@@ -17,5 +17,5 @@ export interface RoundOutcome {
     date?: Date;
 
     /** Represents the state: Victory 1 Loss 2 Tie 3 */
-    resultDto?: { id: DD_FIGHT_ROUND_RESULT, name: DD_FIGHT_ROUND_RESULT[keyof DD_FIGHT_ROUND_RESULT] }
+    resultDto?: { id: ROUND_OUTCOME, name: ROUND_OUTCOME[keyof ROUND_OUTCOME] }
 }

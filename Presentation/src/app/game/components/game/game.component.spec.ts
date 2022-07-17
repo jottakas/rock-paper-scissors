@@ -104,7 +104,7 @@ describe('GameComponent', () => {
 
       describe('Display result', () => {
         const getResultContent = () => {
-          const container = fixture.debugElement.query(By.css('#fight-round-result'))
+          const container = fixture.debugElement.query(By.css('#round-outcome'))
           return (container.nativeElement as HTMLElement).textContent?.toLowerCase();
         };
         it('should display the tie', () => {

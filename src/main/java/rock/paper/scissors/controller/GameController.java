@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import rock.paper.scissors.business.api.GameService;
-import rock.paper.scissors.business.domain.FightRoundResultDto;
+import rock.paper.scissors.business.domain.RoundOutcomeDto;
 import rock.paper.scissors.business.domain.handShapes.HandShapeDto;
 
 @RestController
@@ -55,7 +55,7 @@ public class GameController {
      * @throws Exception
      */
     @PostMapping("/{matchId}/fight-round")
-    public FightRoundResultDto fightRound(@PathVariable() long matchId, @RequestBody String shapeId)
+    public RoundOutcomeDto fightRound(@PathVariable() long matchId, @RequestBody String shapeId)
             throws Exception {
         return gameService.fightRound(matchId, shapeId);
     }

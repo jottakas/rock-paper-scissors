@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class MatchDto {
   private long id;
-  private List<FightRoundResultDto> rounds;
+  private List<RoundOutcomeDto> rounds;
 
   public long getId() {
     return id;
@@ -17,11 +17,11 @@ public class MatchDto {
     this.id = id;
   }
 
-  public List<FightRoundResultDto> getRounds() {
+  public List<RoundOutcomeDto> getRounds() {
     return rounds;
   }
 
-  public void setRounds(List<FightRoundResultDto> rounds) {
+  public void setRounds(List<RoundOutcomeDto> rounds) {
     this.rounds = rounds;
   }
 

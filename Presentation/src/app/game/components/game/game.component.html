@@ -47,17 +47,17 @@
 <!-- END Shapes outcome of the round -->
 
 <!-- Round Result: Victory, loss or tie -->
-<div id="fight-round-result"
+<div id="round-outcome"
   class="h2 pt-3 pr-3 pb-3 border border-light">
   <span class="pt-1 pb-1">
     Round {{currentRound === 1? '?' : currentRound-1}} outcome:
   </span>
-  <span *ngIf="roundOutcome$|async as fightRoundResult; else outcomePending"
-    [class.outcome-tie]="fightRoundResult.isTie"
-    [class.outcome-win]="fightRoundResult.isUserVictory"
-    [class.outcome-loss]="!fightRoundResult.isTie && !fightRoundResult.isUserVictory"
+  <span *ngIf="roundOutcome$|async as roundOutcome; else outcomePending"
+    [class.outcome-tie]="roundOutcome.isTie"
+    [class.outcome-win]="roundOutcome.isUserVictory"
+    [class.outcome-loss]="!roundOutcome.isTie && !roundOutcome.isUserVictory"
     class="outcome p-1 pl-3 pr-3">
-    {{fightRoundResult.isTie ? 'Tie' : (fightRoundResult.isUserVictory ? 'Victory' : 'Loss')}}
+    {{roundOutcome.isTie ? 'Tie' : (roundOutcome.isUserVictory ? 'Victory' : 'Loss')}}
   </span>
   <ng-template #outcomePending>
     <span class="outcome p-1 pl-3 pr-3">-</span>

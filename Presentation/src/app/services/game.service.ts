@@ -15,17 +15,23 @@ export class GameService extends HttpService {
 
   /** Selectors for the different events */
   public selectors = {
-    selectHandShapes: this.evtRestResponse$.pipe(
-      filter(response => response.action === ServiceActions.Game.GET_HAND_SHAPES),
-      map(response => utils.mapResponseData<HandShape[]>(response))
-    ),
-    selectMatchId: this.evtRestResponse$.pipe(
-      filter(response => response.action === ServiceActions.Game.CREATE_MATCH),
-      map(response => utils.mapResponseData<number>(response))
-    ),
-    selectRoundOutcome: this.evtRestResponse$.pipe(
-      filter(response => response.action === ServiceActions.Game.FIGHT_ROUND),
-      map(response => utils.mapResponseData<RoundOutcome>(response)),
+    /** Retrieve the possible hand shapes */
+    selectHandShapes: this.createSelector<HandShape[]>(ServiceActions.Game.GET_HAND_SHAPES),
+    /** Retrieve the created match id */
+    selectMatchId: this.createSelector<number>(ServiceActions.Game.CREATE_MATCH),
+    /** Retrieve the fight round result. Contains the cpu shape and the outcome */
+    selectRoundOutcome: this.createSelector<RoundOutcome>(ServiceActions.Game.FIGHT_ROUND),
+  }
+
+  /**
+   * Creates a selector for the service action result
+   * @param action Service action type to listen to
+   * @returns selector
+   */
+  private createSelector<Result>(action: string) {
+    return this.evtRestResponse$.pipe(
+      filter(response => response.action === action),
+      map(response => utils.mapResponseData<Result>(response)),
     )
   }
 

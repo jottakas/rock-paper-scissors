@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, map, Observable, Subscription, withLatestFrom } from 'rxjs';
 import { GameService } from '../../../services/game.service';
+import { ComponentWithSubscriptions } from '../../../shared/classes/component-with-subscriptions.class';
 import { DD_OUTCOME } from '../../../shared/enums/dd-outcome.enum';
 import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
 import { RoundOutcome } from '../../../shared/interfaces/round-outcome.interface';
@@ -12,7 +13,7 @@ import { utils } from '../../../shared/util/utils';
   styles: [
   ]
 })
-export class GameComponent implements OnInit, OnDestroy {
+export class GameComponent extends ComponentWithSubscriptions {
 
   /** Retrieve the possible hand shapes */
   handShapes$ = this.gameService.selectors.selectHandShapes;
@@ -43,22 +44,17 @@ export class GameComponent implements OnInit, OnDestroy {
   /** Store the round results to display the final result */
   private roundResults: DD_OUTCOME[] = []
 
-  /** Store the subscriptions to cleanup on destroy */
-  private cleanupSubscriptions: Subscription[] = [];
+  constructor(private readonly gameService: GameService) {
+    super();
+  }
 
-  constructor(private readonly gameService: GameService) { }
-
-  ngOnInit(): void {
+  protected init(): void {
     this.createMatch();
     this.gameService.getHandShapes();
 
     this.cleanupSubscriptions = [
       this.roundOutcome$.subscribe(this.processFightRoundResult)
     ]
-  }
-
-  ngOnDestroy(): void {
-    utils.unsubscribe(this.cleanupSubscriptions);
   }
 
   /**

@@ -15,6 +15,7 @@ import { OutcomeComponent } from './outcome/outcome.component';
 import { RoundOutcomeHandShapesComponent } from './round-outcome-hand-shapes/round-outcome-hand-shapes.component';
 import { UserHandShapeInputComponent } from './user-hand-shape-input/user-hand-shape-input.component';
 import { UserRoundsPerMatchInputComponent } from './user-rounds-per-match-input/user-rounds-per-match-input.component';
+import { cold, hot } from 'jasmine-marbles';
 
 describe('GameComponent', () => {
   let component: GameComponent;
@@ -94,6 +95,7 @@ describe('GameComponent', () => {
   });
 
   beforeEach(() => {
+    // Setup the match and hand shape list
     gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, action: ServiceActions.Game.CREATE_MATCH, data: mockMatchId });
     gameServiceSpy.evtRestResponse$.next({ requestId: getHandShapesMockId, action: ServiceActions.Game.GET_HAND_SHAPES, data: mockShapes });
   });
@@ -108,12 +110,12 @@ describe('GameComponent', () => {
         expect(gameServiceSpy.createMatch).toHaveBeenCalled();
       })
 
-      // TODO: Fix test
-      xit('should assign the data to the match id property', (fnDone) => {
-        component.matchId$.subscribe(result => {
-          expect(result).toEqual(mockMatchId);
-          fnDone();
-        });
+      it('should assign the data to the match id property', () => {
+        // Act
+        gameServiceSpy.evtRestResponse$.next({ requestId: createMatchMockId, action: ServiceActions.Game.CREATE_MATCH, data: mockMatchId });
+        //Assert
+        const expected = cold('a', { a: mockMatchId });
+        expect(component.matchId$).toBeObservable(expected);
       })
     })
 
@@ -127,8 +129,6 @@ describe('GameComponent', () => {
           expect(result).toEqual(mockShapes);
           fnDone();
         });
-
-        // Act
       })
     })
 

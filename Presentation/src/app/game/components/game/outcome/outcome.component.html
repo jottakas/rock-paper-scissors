@@ -1,0 +1,16 @@
+<div id="match-round-result"
+  class="h4 pt-3 pr-3 pb-3 border border-light">
+  <span class="pt-1 pb-1">
+    {{header}}
+  </span>
+  <span *ngIf="outcome; else outcomePending"
+    [class.outcome-tie]="outcome === ROUND_OUTCOME.Tie"
+    [class.outcome-win]="outcome === ROUND_OUTCOME.Victory"
+    [class.outcome-loss]="outcome === ROUND_OUTCOME.Loss"
+    class="outcome p-1 pl-3 pr-3">
+    {{outcomeToString(outcome)}}
+  </span>
+  <ng-template #outcomePending>
+    <span class="outcome p-1 pl-3 pr-3">-</span>
+  </ng-template>
+</div>

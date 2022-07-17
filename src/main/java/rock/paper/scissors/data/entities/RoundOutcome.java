@@ -1,6 +1,5 @@
 package rock.paper.scissors.data.entities;
 
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +16,7 @@ import javax.persistence.TemporalType;
  * Fight round result
  */
 @Entity
-public class FightRoundResult {
+public class RoundOutcome {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
@@ -42,8 +41,8 @@ public class FightRoundResult {
 
   /** Result of the round: Victory 1 Loss 2 TIe 3 */
   @ManyToOne(optional = false)
-  @JoinColumn(name = "id_dd_fight_round_result")
-  private DdFightRoundResult ddFightRoundResult;
+  @JoinColumn(name = "id_dd_round_outcome")
+  private DdRoundOutcome ddRoundOutcome;
 
   public long getId() {
     return id;
@@ -77,12 +76,12 @@ public class FightRoundResult {
     this.roundNumber = roundNumber;
   }
 
-  public DdFightRoundResult getDdFightRoundResult() {
-    return ddFightRoundResult;
+  public Date getDate() {
+    return date;
   }
 
-  public void setDdFightRoundResult(DdFightRoundResult ddFightRoundResult) {
-    this.ddFightRoundResult = ddFightRoundResult;
+  public void setDate(Date date) {
+    this.date = date;
   }
 
   public Match getMatch() {
@@ -93,11 +92,11 @@ public class FightRoundResult {
     this.match = match;
   }
 
-  public Date getDate() {
-    return date;
+  public DdRoundOutcome getDdRoundOutcome() {
+    return ddRoundOutcome;
   }
 
-  public void setDate(Date date) {
-    this.date = date;
+  public void setDdRoundOutcome(DdRoundOutcome ddRoundOutcome) {
+    this.ddRoundOutcome = ddRoundOutcome;
   }
 }

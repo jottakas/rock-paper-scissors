@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Observable, Subscription, tap, withLatestFrom } from 'rxjs';
+import { filter, map, Observable, Subscription, withLatestFrom } from 'rxjs';
 import { GameService } from '../../../services/game.service';
-import { ServiceActions } from '../../../services/service-actions';
-import { DD_FIGHT_ROUND_RESULT } from '../../../shared/enums/dd-fight-round-result.enum';
-import { FightRoundResult } from '../../../shared/interfaces/fight-round-result.interface';
+import { DD_OUTCOME } from '../../../shared/enums/dd-outcome.enum';
 import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
+import { RoundOutcome } from '../../../shared/interfaces/round-outcome.interface';
 import { utils } from '../../../shared/util/utils';
 
 @Component({
@@ -16,28 +15,16 @@ import { utils } from '../../../shared/util/utils';
 export class GameComponent implements OnInit, OnDestroy {
 
   /** Retrieve the possible hand shapes */
-  handShapes$: Observable<HandShape[]> = this.gameService.evtRestResponse$.pipe(
-    filter(response => response.action === ServiceActions.Game.GET_HAND_SHAPES),
-    map(utils.mapResponseData)
-  )
-
+  handShapes$ = this.gameService.selectors.selectHandShapes;
   /** Retrieve the created match id */
-  matchId$: Observable<number> = this.gameService.selectors.selectMatchId;
-
+  matchId$ = this.gameService.selectors.selectMatchId;
   /** Retrieve the fight round result. Contains the cpu shape and the outcome */
-  fightRoundResult$: Observable<FightRoundResult> = this.gameService.evtRestResponse$.pipe(
-    filter(response => response.action === ServiceActions.Game.FIGHT_ROUND),
-    map(utils.mapResponseData),
-  )
+  roundOutcome$ = this.gameService.selectors.selectRoundOutcome;
 
   /** Result of the CPU shape */
-  cpuHandShape$: Observable<HandShape | undefined> = this.fightRoundResult$.pipe(
-    withLatestFrom(this.handShapes$),
-    map(([fightRoundResult, handShapes]) => handShapes.find(hs => hs.id === fightRoundResult.cpuShapeId))
-  )
-
+  cpuHandShape$ = this.gameService.selectors.selectCpuHandShape;
   /** Selection of the user to display */
-  userSelectedShape: HandShape | undefined;
+  userHandShape$ = this.gameService.selectors.selectUserHandShape;
 
   /** Possible server errors */
   errors$ = this.gameService.evtRestResponse$.pipe(
@@ -46,17 +33,15 @@ export class GameComponent implements OnInit, OnDestroy {
   )
 
   /** Current rounds per match */
-  currentRoundsPerMatch = 5;
-  /** User input to modify the current rounds per match */
-  newRoundsPerMatch = this.currentRoundsPerMatch;
+  roundsPerMatch = 5;
   /** Current round playing */
   currentRound: number = 1;
 
-  public readonly DD_FIGHT_ROUND_RESULT = DD_FIGHT_ROUND_RESULT;
-  matchResult?: DD_FIGHT_ROUND_RESULT;
+  /** Match result */
+  matchOutcome?: DD_OUTCOME;
 
   /** Store the round results to display the final result */
-  private roundResults: DD_FIGHT_ROUND_RESULT[] = []
+  private roundResults: DD_OUTCOME[] = []
 
   /** Store the subscriptions to cleanup on destroy */
   private cleanupSubscriptions: Subscription[] = [];
@@ -68,7 +53,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.gameService.getHandShapes();
 
     this.cleanupSubscriptions = [
-      this.fightRoundResult$.subscribe(this.processFightRoundResult)
+      this.roundOutcome$.subscribe(this.processFightRoundResult)
     ]
   }
 
@@ -91,7 +76,7 @@ export class GameComponent implements OnInit, OnDestroy {
   changeRoundsPerMatch(newRoundsPerMatch: number) {
     const isConfirmed = confirm('Do you want to start another match? You will not see the current stats anymore although they are still in the database')
     if (isConfirmed) {
-      this.currentRoundsPerMatch = newRoundsPerMatch;
+      this.roundsPerMatch = newRoundsPerMatch;
       this.createMatch();
       alert('Rounds changed')
     }
@@ -99,7 +84,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   /** Creates a new match */
   public createMatch = () => {
-    this.matchResult = undefined;
+    this.matchOutcome = undefined;
     this.currentRound = 1;
     this.roundResults = [];
 
@@ -107,34 +92,33 @@ export class GameComponent implements OnInit, OnDestroy {
   }
   /**
    * Send the user selection to fight the cpu
+   * @param matchId match id to fight the round
    * @param handShape user selection
    */
   fightRound(matchId: number, handShape: HandShape) {
     this.currentRound++;
-    this.userSelectedShape = handShape;
-
     this.gameService.fightRound(matchId, handShape.id);
   }
 
-  private processFightRoundResult = (fightRoundResult: FightRoundResult) => {
-    const { Victory: VICTORY, Loss: LOSS, Tie: TIE } = DD_FIGHT_ROUND_RESULT;
+  private processFightRoundResult = (fightRoundResult: RoundOutcome) => {
+    const { Victory: VICTORY, Loss: LOSS, Tie: TIE } = DD_OUTCOME;
     const fightResult = fightRoundResult.isTie ? TIE : fightRoundResult.isUserVictory ? VICTORY : LOSS;
     this.roundResults.push(fightResult);
 
-    const minRoundsToWin = Math.floor(this.currentRoundsPerMatch / 2) + 1;
+    const minRoundsToWin = Math.floor(this.roundsPerMatch / 2) + 1;
 
     const userVictories = this.roundResults.filter(r => r === VICTORY).length;
     const cpuVictories = this.roundResults.filter(r => r === LOSS).length;
 
-    const isMatchFinished = this.currentRound > this.currentRoundsPerMatch ||
+    // The match is finished when the rounds are finished
+    // or someone has the minimum amount of wins
+    const isMatchFinished = this.currentRound > this.roundsPerMatch ||
       userVictories >= minRoundsToWin || cpuVictories >= minRoundsToWin;
 
-    this.matchResult = undefined;
+    this.matchOutcome = undefined;
     if (isMatchFinished) {
-      this.matchResult = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
-      setTimeout(() => alert(`Match outcome: ${this.matchResultToString(this.matchResult!)}`))
+      this.matchOutcome = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
+      setTimeout(() => alert(`Match outcome: ${utils.outcomeToString(this.matchOutcome!)}`))
     }
   }
-
-  public matchResultToString = (result: DD_FIGHT_ROUND_RESULT) => result === DD_FIGHT_ROUND_RESULT.Tie ? 'Tie' : result === DD_FIGHT_ROUND_RESULT.Victory ? 'Victory' : 'Loss'
 }

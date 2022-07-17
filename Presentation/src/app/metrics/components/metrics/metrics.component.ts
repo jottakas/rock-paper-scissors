@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, map, Observable, Subscription } from 'rxjs';
 import { GameService } from '../../../services/game.service';
 import { MetricsService } from '../../../services/metrics.service';
-import { DD_FIGHT_ROUND_RESULT } from '../../../shared/enums/dd-fight-round-result.enum';
+import { DD_OUTCOME } from '../../../shared/enums/dd-outcome.enum';
 import { MatchMetrics } from '../../../shared/interfaces/match-metrics.interface';
 import { Match } from '../../../shared/interfaces/match.interface';
 import { utils } from '../../../shared/util/utils';
@@ -71,9 +71,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.currentMatchMetrics = this.initMatchMetrics();
 
     if (roundsPlayed > 0) {
-      const victoryRounds = rounds.filter(r => r.resultDto?.id === DD_FIGHT_ROUND_RESULT.Victory);
-      const lossRounds = rounds.filter(r => r.resultDto?.id === DD_FIGHT_ROUND_RESULT.Loss);
-      const tieRounds = rounds.filter(r => r.resultDto?.id === DD_FIGHT_ROUND_RESULT.Tie);
+      const victoryRounds = rounds.filter(r => r.resultDto?.id === DD_OUTCOME.Victory);
+      const lossRounds = rounds.filter(r => r.resultDto?.id === DD_OUTCOME.Loss);
+      const tieRounds = rounds.filter(r => r.resultDto?.id === DD_OUTCOME.Tie);
 
       this.currentMatchMetrics = {
         matchId: currentMatch.id,

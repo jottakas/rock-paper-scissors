@@ -1,0 +1,25 @@
+<div class="row mt-5">
+  <div class="col-12">
+    <h2 *ngIf="isMatchFinished && currentRound < roundsPerMatch">
+      Select an action for round {{currentRound}} of {{roundsPerMatch}}
+    </h2>
+    <h2 *ngIf="isMatchFinished">
+      Match finished!
+    </h2>
+    <div *ngFor="let handShape of handShapes$|async"
+      id="user-hand-shapes"
+      class="d-inline-block mr-3">
+      <app-hand-shape [handShape]="handShape"
+        [isDisabled]="isMatchFinished"
+        (evtClick)="evtShapeSelected.emit($event)"></app-hand-shape>
+    </div>
+
+    <div>
+      <button *ngIf="isMatchFinished"
+        class="btn btn-primary"
+        (click)="evtNewMatch.emit()">
+        Play another match
+      </button>
+    </div>
+  </div>
+</div>

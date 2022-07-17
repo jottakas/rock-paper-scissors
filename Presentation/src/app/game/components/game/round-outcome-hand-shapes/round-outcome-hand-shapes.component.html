@@ -1,0 +1,41 @@
+<div class="row mt-5"
+  style="max-width: 700px">
+  <div class="col-12 mb-1">
+    <h3>
+      Result of round {{currentRound === 1 ? '?' : currentRound-1}}
+    </h3>
+  </div>
+  <div class="col-12 col-md-4">
+    <h3>User selection</h3>
+    <div id="user-selected-shape">
+      <app-hand-shape [isDisabled]="true"
+        [handShape]="userHandShape || undefined">
+      </app-hand-shape>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div *ngIf="roundOutcome$|async as roundOutcome"
+      class="flex-center h-100 w-100 justify-content-start justify-content-md-center"
+      style="font-size: 72px">
+      {{roundOutcome.isTie ? '-' : (roundOutcome.isUserVictory ? '>' : '<')}}
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4 text-left text-md-right">
+    <div id="cpu-selected-shape ">
+      <h3>CPU Selection</h3>
+      <div class="ml-0 ml-md-auto">
+        <ng-container *ngIf="cpuHandShape; else waitingForUser">
+          <app-hand-shape [isDisabled]="true"
+            [handShape]="cpuHandShape">
+          </app-hand-shape>
+        </ng-container>
+        <ng-template #waitingForUser>
+          <app-hand-shape [isDisabled]="true">
+          </app-hand-shape>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

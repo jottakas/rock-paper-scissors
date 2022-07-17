@@ -18,7 +18,7 @@ public class Match {
   private long id;
 
   @OneToMany(mappedBy = "match")
-  private Set<FightRoundResult> fightRoundResult;
+  private Set<RoundOutcome> fightRoundResult;
 
   public long getId() {
     return id;
@@ -28,11 +28,11 @@ public class Match {
     this.id = id;
   }
 
-  public Set<FightRoundResult> getFightRoundResult() {
+  public Set<RoundOutcome> getFightRoundResult() {
     return fightRoundResult;
   }
 
-  public void setFightRoundResult(Set<FightRoundResult> fightRoundResult) {
+  public void setFightRoundResult(Set<RoundOutcome> fightRoundResult) {
     this.fightRoundResult = fightRoundResult;
   }
 }

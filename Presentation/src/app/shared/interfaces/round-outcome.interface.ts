@@ -1,7 +1,7 @@
-import { DD_FIGHT_ROUND_RESULT } from '../enums/dd-fight-round-result.enum';
+import { DD_OUTCOME } from '../enums/dd-outcome.enum';
 import { HAND_SHAPES } from "../enums/hand-shapes.enum";
 
-export interface FightRoundResult {
+export interface RoundOutcome {
     /** User Shape chosen by the computer */
     userShapeId?: HAND_SHAPES;
     /** Shape chosen by the computer */
@@ -17,5 +17,5 @@ export interface FightRoundResult {
     date?: Date;
 
     /** Represents the state: Victory 1 Loss 2 Tie 3 */
-    resultDto?: { id: DD_FIGHT_ROUND_RESULT, name: DD_FIGHT_ROUND_RESULT[keyof DD_FIGHT_ROUND_RESULT] }
+    resultDto?: { id: DD_OUTCOME, name: DD_OUTCOME[keyof DD_OUTCOME] }
 }

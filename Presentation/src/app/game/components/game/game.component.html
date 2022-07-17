@@ -1,143 +1,44 @@
 <h1>Rock Paper Scissors</h1>
 
-<div class="row">
-  <div class="col-12">
-    <span>How many rounds do you want to play per match?</span>
-    <div>Current rounds per match: {{currentRoundsPerMatch}}</div>
-
-    <form #roundsForm="ngForm">
-      <div class="form-group">
-        <label for="roundsPerMatch">New rounds per match</label>
-        <input type="number"
-          name="newRoundsPerMatch"
-          [(ngModel)]="newRoundsPerMatch"
-          min="1"
-          class="form-control"
-          id="roundsPerMatch"
-          placeholder="Rounds" />
-      </div>
-
-      <button class="btn btn-primary"
-        [disabled]="roundsForm.invalid"
-        (click)="changeRoundsPerMatch(newRoundsPerMatch)">
-        Change the rounds per match (reset stats)
-      </button>
-    </form>
-  </div>
-</div>
+<app-user-rounds-per-match-input [currentRoundsPerMatch]="roundsPerMatch"
+  (evtChangeRoundsPerMatch)="changeRoundsPerMatch($event)">
+</app-user-rounds-per-match-input>
 
 <!-- User needs to select an action -->
-<div class="row mt-5"
-  *ngIf="matchId$|async as matchId">
-  <div class="col-12">
-    <h2 *ngIf="matchResult !== undefined && currentRound < currentRoundsPerMatch">
-      Select an action for round {{currentRound}} of {{currentRoundsPerMatch}}
-    </h2>
-    <h2 *ngIf="matchResult">
-      Match finished!
-    </h2>
-    <div *ngFor="let handShape of handShapes$|async"
-      id="user-hand-shapes"
-      class="d-inline-block mr-3">
-      <app-hand-shape [handShape]="handShape"
-        [isDisabled]="matchResult !== undefined"
-        (evtClick)="fightRound(matchId, $event)"></app-hand-shape>
-    </div>
-
-    <button *ngIf="matchResult"
-      class="btn btn-primary"
-      (click)="createMatch()">Play another match</button>
-  </div>
-</div>
+<app-user-hand-shape-input *ngIf="matchId$|async as matchId"
+  [isMatchFinished]="matchOutcome !== undefined"
+  [currentRound]="currentRound"
+  [roundsPerMatch]="roundsPerMatch"
+  (evtShapeSelected)="fightRound(matchId, $event)"
+  (evtNewMatch)="createMatch()">
+</app-user-hand-shape-input>
 <!-- END User needs to select an action -->
 
 <!-- Shapes outcome of the round -->
-<div class="row mt-5"
-  style="max-width: 700px">
-  <div class="col-12 mb-1">
-    <h3>
-      Result of round {{currentRound === 1 ? '?' : currentRound-1}}
-    </h3>
-  </div>
-  <div class="col-12 col-md-4">
-    <h3>User selection</h3>
-    <div id="user-selected-shape">
-      <app-hand-shape [isDisabled]="true"
-        [handShape]="userSelectedShape">
-      </app-hand-shape>
-    </div>
-  </div>
+<app-round-outcome-hand-shapes [userHandShape]="(userHandShape$|async)!"
+  [cpuHandShape]="(cpuHandShape$|async)!"
+  [currentRound]="currentRound">
+</app-round-outcome-hand-shapes>
+<!-- END Shapes outcome of the round -->
 
-  <div class="col-12 col-md-4">
-    <div *ngIf="fightRoundResult$|async as fightRoundResult;"
-      class="flex-center h-100 w-100 justify-content-start justify-content-md-center"
-      style="font-size: 72px">
-      {{fightRoundResult.isTie ? '-' : (fightRoundResult.isUserVictory ? '>' : '<')}} </div>
-    </div>
+<!-- Round Result: Victory, loss or tie -->
+<app-outcome [outcome]="(roundOutcome$|async)?.resultDto?.id"
+  [header]="'Round ' + (currentRound === 1? '?' : currentRound-1)+ ' outcome:'">
+</app-outcome>
+<!-- END Round Result: Victory, loss or tie -->
 
-    <div class="col-12 col-md-4 text-left text-md-right">
-      <div id="cpu-selected-shape ">
-        <h3>CPU Selection</h3>
-        <div class="ml-0 ml-md-auto">
-          <ng-container *ngIf="cpuHandShape$|async as cpuHandShape; else waitingForUser">
-            <app-hand-shape [isDisabled]="true"
-              [handShape]="cpuHandShape">
-            </app-hand-shape>
-          </ng-container>
-          <ng-template #waitingForUser>
-            <app-hand-shape [isDisabled]="true">
-            </app-hand-shape>
-          </ng-template>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- END Shapes outcome of the round -->
+<!-- Match Result: Victory, loss or tie -->
+<app-outcome [outcome]="matchOutcome"
+  [header]="'Match id ' + (matchId$|async)+ ' outcome:'">
+</app-outcome>
+<!-- Match END Result: Victory, loss or tie -->
 
-  <!-- Round Result: Victory, loss or tie -->
-  <div id="fight-round-result"
-    class="h2 pt-3 pr-3 pb-3 border border-light">
-    <span class="pt-1 pb-1">
-      Round {{currentRound === 1? '?' : currentRound-1}} outcome:
-    </span>
-    <span *ngIf="fightRoundResult$|async as fightRoundResult; else outcomePending"
-      [class.outcome-tie]="fightRoundResult.isTie"
-      [class.outcome-win]="fightRoundResult.isUserVictory"
-      [class.outcome-loss]="!fightRoundResult.isTie && !fightRoundResult.isUserVictory"
-      class="outcome p-1 pl-3 pr-3">
-      {{fightRoundResult.isTie ? 'Tie' : (fightRoundResult.isUserVictory ? 'Victory' : 'Loss')}}
-    </span>
-    <ng-template #outcomePending>
-      <span class="outcome p-1 pl-3 pr-3">-</span>
-    </ng-template>
-  </div>
-  <!-- END Round Result: Victory, loss or tie -->
+<div class="h2 pt-3 pr-3 pb-3 border border-light">
+  <button class="btn btn-primary"
+    (click)="askCreateMatch()">New match (reset stats)</button>
+</div>
 
-  <!-- Match Result: Victory, loss or tie -->
-  <div *ngIf="matchResult"
-    id="match-round-result"
-    class="h2 pt-3 pr-3 pb-3 border border-light">
-    <span class="pt-1 pb-1">
-      Match {{matchId$|async}} outcome:
-    </span>
-    <span [class.outcome-tie]="matchResult === DD_FIGHT_ROUND_RESULT.Tie"
-      [class.outcome-win]="matchResult === DD_FIGHT_ROUND_RESULT.Victory"
-      [class.outcome-loss]="matchResult === DD_FIGHT_ROUND_RESULT.Loss"
-      class="outcome p-1 pl-3 pr-3">
-      {{matchResultToString(matchResult)}}
-    </span>
-    <ng-template #outcomePending>
-      <span class="outcome p-1 pl-3 pr-3">-</span>
-    </ng-template>
-  </div>
-  <!-- Match END Result: Victory, loss or tie -->
-
-  <div class="h2 pt-3 pr-3 pb-3 border border-light">
-    <button class="btn btn-primary"
-      (click)="askCreateMatch()">New match (reset stats)</button>
-  </div>
-
-  <div *ngIf="errors$|async"
-    id="server-errors">
-    There was an unexpected server error :(
-  </div>
+<div *ngIf="errors$|async"
+  id="server-errors">
+  There was an unexpected server error :(
+</div>

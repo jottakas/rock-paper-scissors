@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FightRoundResultDto {
+public class RoundOutcomeDto {
   /** Shape chosen by the user */
   private String userShapeId;
   /** Shape chosen by the computer */

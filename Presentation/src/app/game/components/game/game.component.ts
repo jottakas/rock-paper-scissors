@@ -23,7 +23,6 @@ export class GameComponent implements OnInit, OnDestroy {
 
   /** Result of the CPU shape */
   cpuHandShape$ = this.gameService.selectors.selectCpuHandShape;
-
   /** Selection of the user to display */
   userHandShape$ = this.gameService.selectors.selectUserHandShape;
 
@@ -38,7 +37,8 @@ export class GameComponent implements OnInit, OnDestroy {
   /** Current round playing */
   currentRound: number = 1;
 
-  matchResult?: DD_OUTCOME;
+  /** Match result */
+  matchOutcome?: DD_OUTCOME;
 
   /** Store the round results to display the final result */
   private roundResults: DD_OUTCOME[] = []
@@ -84,7 +84,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   /** Creates a new match */
   public createMatch = () => {
-    this.matchResult = undefined;
+    this.matchOutcome = undefined;
     this.currentRound = 1;
     this.roundResults = [];
 
@@ -115,10 +115,10 @@ export class GameComponent implements OnInit, OnDestroy {
     const isMatchFinished = this.currentRound > this.roundsPerMatch ||
       userVictories >= minRoundsToWin || cpuVictories >= minRoundsToWin;
 
-    this.matchResult = undefined;
+    this.matchOutcome = undefined;
     if (isMatchFinished) {
-      this.matchResult = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
-      setTimeout(() => alert(`Match outcome: ${utils.outcomeToString(this.matchResult!)}`))
+      this.matchOutcome = userVictories === cpuVictories ? TIE : userVictories > cpuVictories ? VICTORY : LOSS;
+      setTimeout(() => alert(`Match outcome: ${utils.outcomeToString(this.matchOutcome!)}`))
     }
   }
 }

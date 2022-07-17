@@ -6,7 +6,7 @@
 
 <!-- User needs to select an action -->
 <app-user-hand-shape-input *ngIf="matchId$|async as matchId"
-  [isMatchFinished]="matchResult !== undefined"
+  [isMatchFinished]="matchOutcome !== undefined"
   [currentRound]="currentRound"
   [roundsPerMatch]="roundsPerMatch"
   (evtShapeSelected)="fightRound(matchId, $event)"
@@ -28,7 +28,7 @@
 <!-- END Round Result: Victory, loss or tie -->
 
 <!-- Match Result: Victory, loss or tie -->
-<app-outcome [outcome]="matchResult"
+<app-outcome [outcome]="matchOutcome"
   [header]="'Match id ' + (matchId$|async)+ ' outcome:'">
 </app-outcome>
 <!-- Match END Result: Victory, loss or tie -->

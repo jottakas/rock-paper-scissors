@@ -26,7 +26,7 @@ export class HttpService {
   */
   protected createSelector<Result>(action: string) {
     return this.evtRestResponse$.pipe(
-      filter(response => response.action === action),
+      filter(response => response.action === action && !response.error),
       map(response => utils.mapResponseData<Result>(response)),
     )
   }

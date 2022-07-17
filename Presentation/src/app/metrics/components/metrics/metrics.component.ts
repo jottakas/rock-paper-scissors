@@ -5,7 +5,7 @@ import { MetricsService } from '../../../services/metrics.service';
 import { ComponentWithSubscriptions } from '../../../shared/classes/component-with-subscriptions.class';
 import { DD_OUTCOME } from '../../../shared/enums/dd-outcome.enum';
 import { MatchMetrics } from '../../../shared/interfaces/match-metrics.interface';
-import { MatchOutcome } from '../../../shared/interfaces/match-outcome.interface';
+import { Match } from '../../../shared/interfaces/match.interface';
 
 @Component({
   selector: 'app-metrics',
@@ -53,7 +53,7 @@ export class MetricsComponent extends ComponentWithSubscriptions {
    * Processes the matches to create the latest match metrics
    * @param matches List of all the matches
    */
-  private processMatches = (matches: MatchOutcome[]) => {
+  private processMatches = (matches: Match[]) => {
     const maxMatchId = Math.max(...matches.map(m => m.id));
     const currentMatch = matches.find(m => m.id === maxMatchId)!;
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatchOutcome } from '../shared/interfaces/match-outcome.interface';
+import { Match } from '../shared/interfaces/match.interface';
 import { HttpService } from './http.service';
 import { ServiceActions } from './service-actions';
 
@@ -12,7 +12,7 @@ export class MetricsService extends HttpService {
   /** Selectors for the different events */
   public selectors = {
     /** Retrieve all the matches data */
-    selectMatches: super.createSelector<MatchOutcome[]>(ServiceActions.Metrics.GET_MATCHES)
+    selectMatches: super.createSelector<Match[]>(ServiceActions.Metrics.GET_MATCHES)
   }
 
   /**

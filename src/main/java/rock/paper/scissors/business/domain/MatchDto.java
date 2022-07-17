@@ -3,7 +3,7 @@ package rock.paper.scissors.business.domain;
 import java.util.List;
 
 /**
- * Generic Data Transfer Object with id and name
+ * Match with the rounds
  */
 public class MatchDto {
   private long id;

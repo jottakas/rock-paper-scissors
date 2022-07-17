@@ -5,7 +5,7 @@ import { GameService } from '../../../services/game.service';
 import { MetricsService } from '../../../services/metrics.service';
 import { ComponentWithSubscriptions } from '../../../shared/classes/component-with-subscriptions.class';
 import { HandShape } from '../../../shared/interfaces/hand-shape.interface';
-import { MatchOutcome } from '../../../shared/interfaces/match-outcome.interface';
+import { Match } from '../../../shared/interfaces/match.interface';
 import { utils } from '../../../shared/util/utils';
 
 @Component({
@@ -91,7 +91,7 @@ export class MatchesChartComponent extends ComponentWithSubscriptions {
       );
   }
 
-  private updateChart = ([matches, handShapes]: [MatchOutcome[], HandShape[]]) => {
+  private updateChart = ([matches, handShapes]: [Match[], HandShape[]]) => {
 
     const margin = 50;
     const width = 750 - (margin * 2);

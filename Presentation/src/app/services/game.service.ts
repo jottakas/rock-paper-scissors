@@ -13,9 +13,9 @@ import { ServiceActions } from './service-actions';
 export class GameService extends HttpService {
   protected override readonly apiUrl = 'rock-paper-scissors';
 
-  private readonly selectHandShapes = this.createSelector<HandShape[]>(ServiceActions.Game.GET_HAND_SHAPES);
-  private readonly selectMatchId = this.createSelector<number>(ServiceActions.Game.CREATE_MATCH);
-  private readonly selectRoundOutcome = this.createSelector<RoundOutcome>(ServiceActions.Game.FIGHT_ROUND);
+  private readonly selectHandShapes = super.createSelector<HandShape[]>(ServiceActions.Game.GET_HAND_SHAPES);
+  private readonly selectMatchId = super.createSelector<number>(ServiceActions.Game.CREATE_MATCH);
+  private readonly selectRoundOutcome = super.createSelector<RoundOutcome>(ServiceActions.Game.FIGHT_ROUND);
 
   /** Selectors for the different events */
   public selectors = {
@@ -34,18 +34,6 @@ export class GameService extends HttpService {
     selectCpuHandShape: this.selectRoundOutcome.pipe(
       withLatestFrom(this.selectHandShapes),
       map(([fightRoundResult, handShapes]) => handShapes.find(hs => hs.id === fightRoundResult.cpuShapeId))
-    )
-  }
-
-  /**
-   * Creates a selector for the service action result
-   * @param action Service action type to listen to
-   * @returns selector
-   */
-  private createSelector<Result>(action: string) {
-    return this.evtRestResponse$.pipe(
-      filter(response => response.action === action),
-      map(response => utils.mapResponseData<Result>(response)),
     )
   }
 

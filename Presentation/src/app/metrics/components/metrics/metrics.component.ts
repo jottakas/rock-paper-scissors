@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Observable, Subscription } from 'rxjs';
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 import { GameService } from '../../../services/game.service';
 import { MetricsService } from '../../../services/metrics.service';
+import { ComponentWithSubscriptions } from '../../../shared/classes/component-with-subscriptions.class';
 import { DD_OUTCOME } from '../../../shared/enums/dd-outcome.enum';
 import { MatchMetrics } from '../../../shared/interfaces/match-metrics.interface';
-import { Match } from '../../../shared/interfaces/match.interface';
-import { utils } from '../../../shared/util/utils';
+import { MatchOutcome } from '../../../shared/interfaces/match-outcome.interface';
 
 @Component({
   selector: 'app-metrics',
@@ -13,35 +13,27 @@ import { utils } from '../../../shared/util/utils';
   styles: [
   ]
 })
-export class MetricsComponent implements OnInit, OnDestroy {
+export class MetricsComponent extends ComponentWithSubscriptions {
 
-  public matches$ = this.metricsService.evtRestResponse$.pipe(
-    filter(utils.isResponseWithData),
-    map(utils.mapResponseData)
-  );
+  public matches$ = this.metricsService.selectors.selectMatches;
 
   /** Retrieve the created match id */
   currentMatchId$: Observable<number> = this.gameService.selectors.selectMatchId;
 
   public currentMatchMetrics: MatchMetrics = this.initMatchMetrics();
 
-  /** Store the subscriptions to cleanup on destroy */
-  private cleanupSubscriptions: Subscription[] = [];
-
   constructor(private gameService: GameService,
-    private metricsService: MetricsService) { }
+    private metricsService: MetricsService) {
+    super();
+  }
 
-  ngOnInit(): void {
+  init(): void {
     this.cleanupSubscriptions = [
       this.gameService.evtRestResponse$.subscribe(() => {
         this.metricsService.getMatches();
       }),
       this.matches$.subscribe(this.processMatches)
     ]
-  }
-
-  ngOnDestroy(): void {
-    utils.unsubscribe(this.cleanupSubscriptions);
   }
 
   private initMatchMetrics() {
@@ -61,7 +53,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
    * Processes the matches to create the latest match metrics
    * @param matches List of all the matches
    */
-  private processMatches = (matches: Match[]) => {
+  private processMatches = (matches: MatchOutcome[]) => {
     const maxMatchId = Math.max(...matches.map(m => m.id));
     const currentMatch = matches.find(m => m.id === maxMatchId)!;
 

@@ -1,10 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, of, Subject, tap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, map, of, Subject, tap } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { environment } from '../../environments/environment';
 import { RestResponse } from '../shared/interfaces/rest-response.interface';
 import { RestEndpointWithAction } from '../shared/interfaces/rest-url-action.interface';
+import { utils } from '../shared/util/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,17 @@ export class HttpService {
   /** Emits a request response */
   public evtRestResponse$: BehaviorSubject<RestResponse<any>> = new BehaviorSubject({ requestId: 'init', action: 'init' });
 
+  /**
+  * Creates a selector for the service action result
+  * @param action Service action type to listen to
+  * @returns selector
+  */
+  protected createSelector<Result>(action: string) {
+    return this.evtRestResponse$.pipe(
+      filter(response => response.action === action),
+      map(response => utils.mapResponseData<Result>(response)),
+    )
+  }
   /** Queue of http requests */
   private requestQueue: string[] = [];
 
@@ -45,7 +57,7 @@ export class HttpService {
     this.httpClient.get(this.buildUrl(endpoint))
       .pipe(
         map(data => this.onSuccessResponse(requestId, action, data)),
-        catchError(error => this.onErrorResponse(requestId,  action, error))
+        catchError(error => this.onErrorResponse(requestId, action, error))
       )
       .subscribe();
 

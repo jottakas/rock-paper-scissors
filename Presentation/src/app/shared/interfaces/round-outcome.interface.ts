@@ -17,5 +17,5 @@ export interface RoundOutcome {
     date?: Date;
 
     /** Represents the state: Victory 1 Loss 2 Tie 3 */
-    resultDto?: { id: DD_OUTCOME, name: DD_OUTCOME[keyof DD_OUTCOME] }
+    resultDto?: { id: DD_OUTCOME, name?: DD_OUTCOME[keyof DD_OUTCOME] }
 }

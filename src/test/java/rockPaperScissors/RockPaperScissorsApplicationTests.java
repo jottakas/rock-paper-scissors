@@ -1,4 +1,4 @@
-package juan.carlos.li.rockPaperScissors;
+package rockPaperScissors;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

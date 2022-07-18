@@ -10,6 +10,7 @@ https://www.baeldung.com/spring-boot-angular-web
 - Hand Shape: Shape of the hand, actions of the game: rock paper scissors.
 - Game: Logic related to the game. Includes the hand shape list and rounds.
 - Fight Round Result: result of a single round of the game. Includes two booleans to handle the three results: isTie and isUserVictory.
+- Outcome: Win, Loss or TIe
 - Match: one-to-many relationship between Match <- Round. One match includes multiple rounds.
 - Metrics: stats of the game.
 - DTO: Data Transfer Object. Prevents sending entities directly to Frontend.

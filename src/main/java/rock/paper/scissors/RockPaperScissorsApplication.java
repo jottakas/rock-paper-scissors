@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 
 import rock.paper.scissors.data.DdRoundOutcomeRepository;
 import rock.paper.scissors.data.HandShapeRepository;
-import rock.paper.scissors.data.entities.DdRoundOutcome;
+import rock.paper.scissors.data.entities.DdOutcome;
 import rock.paper.scissors.data.entities.HandShape;
 
 @SpringBootApplication
@@ -44,13 +44,13 @@ public class RockPaperScissorsApplication {
     }
 
     private void createDdFightRoundResults(DdRoundOutcomeRepository repository) {
-        DdRoundOutcome victory = new DdRoundOutcome();
+        DdOutcome victory = new DdOutcome();
         victory.setId("1");
         victory.setName("Victory");
-        DdRoundOutcome loss = new DdRoundOutcome();
+        DdOutcome loss = new DdOutcome();
         loss.setId("2");
         loss.setName("Loss");
-        DdRoundOutcome tie = new DdRoundOutcome();
+        DdOutcome tie = new DdOutcome();
         tie.setId("3");
         tie.setName("Tie");
         repository.save(victory);

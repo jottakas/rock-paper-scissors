@@ -41,8 +41,8 @@ public class RoundOutcome {
 
   /** Result of the round: Victory 1 Loss 2 TIe 3 */
   @ManyToOne(optional = false)
-  @JoinColumn(name = "id_dd_round_outcome")
-  private DdRoundOutcome ddRoundOutcome;
+  @JoinColumn(name = "id_dd_outcome")
+  private DdOutcome ddOutcome;
 
   public long getId() {
     return id;
@@ -92,11 +92,11 @@ public class RoundOutcome {
     this.match = match;
   }
 
-  public DdRoundOutcome getDdRoundOutcome() {
-    return ddRoundOutcome;
+  public DdOutcome getDdOutcome() {
+    return ddOutcome;
   }
 
-  public void setDdRoundOutcome(DdRoundOutcome ddRoundOutcome) {
-    this.ddRoundOutcome = ddRoundOutcome;
+  public void setDdOutcome(DdOutcome ddOutcome) {
+    this.ddOutcome = ddOutcome;
   }
 }

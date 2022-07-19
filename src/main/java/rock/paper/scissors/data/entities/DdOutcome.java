@@ -10,10 +10,18 @@ import javax.persistence.OneToMany;
  * Dictionary to represent the three result states: win 1 lose 2 tie 3
  */
 @Entity
-public class DdRoundOutcome {
+public class DdOutcome {
   @Id
   private String id;
   private String name;
+
+  public DdOutcome() {
+  }
+
+  public DdOutcome(String id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
   @OneToMany(mappedBy = "ddRoundOutcome")
   private Set<RoundOutcome> roundOutcomes;

@@ -19,7 +19,7 @@ public class RoundOutcomeMapper extends EntityToDtoMapper<RoundOutcome, RoundOut
     result.setCpuShapeId(entity.getCpuHandShapeId());
     result.setRoundNumber(entity.getRoundNumber());
     result.setDate(entity.getDate());
-    result.setResultDto(new BaseDto(entity.getDdRoundOutcome().getId(), entity.getDdRoundOutcome().getName()));
+    result.setResultDto(new BaseDto(entity.getDdOutcome().getId(), entity.getDdOutcome().getName()));
 
     return result;
   }

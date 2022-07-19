@@ -16,7 +16,7 @@ import rock.paper.scissors.data.DdRoundOutcomeRepository;
 import rock.paper.scissors.data.RoundOutcomeRepository;
 import rock.paper.scissors.data.HandShapeRepository;
 import rock.paper.scissors.data.MatchRepository;
-import rock.paper.scissors.data.entities.DdRoundOutcome;
+import rock.paper.scissors.data.entities.DdOutcome;
 import rock.paper.scissors.data.entities.RoundOutcome;
 import rock.paper.scissors.data.entities.HandShape;
 import rock.paper.scissors.data.entities.Match;
@@ -118,20 +118,20 @@ public class GameServiceImpl implements GameService {
     int roundNumber = match.getFightRoundResult().size() + 1;
     roundOutcome.setRoundNumber(roundNumber);
 
-    DdRoundOutcome ddRoundOutcome = resolveDdFightRoundResult(fightResultDto);
-    roundOutcome.setDdRoundOutcome(ddRoundOutcome);
+    DdOutcome ddRoundOutcome = resolveDdFightRoundResult(fightResultDto);
+    roundOutcome.setDdOutcome(ddRoundOutcome);
 
     roundOutcomeRepository.save(roundOutcome);
   }
 
   /** Retrieves the corresponding fight result entity based on the result DTO */
-  private DdRoundOutcome resolveDdFightRoundResult(RoundOutcomeDto fightResultDto) {
+  private DdOutcome resolveDdFightRoundResult(RoundOutcomeDto fightResultDto) {
     String ddResultId = Constants.Outcome.TIE;
     if (!fightResultDto.isTie()) {
       ddResultId = fightResultDto.isUserVictory() ? Constants.Outcome.VICTORY
           : Constants.Outcome.LOSS;
     }
-    DdRoundOutcome ddResult = ddFightRoundResultRepository.findById(ddResultId)
+    DdOutcome ddResult = ddFightRoundResultRepository.findById(ddResultId)
         .orElseThrow(() -> new EntityNotFoundException());
 
     return ddResult;

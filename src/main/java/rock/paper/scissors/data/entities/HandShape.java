@@ -12,6 +12,14 @@ public class HandShape {
   private String id;
   private String name;
 
+  public HandShape() {
+  }
+
+  public HandShape(String id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+
   public String getId() {
     return id;
   }

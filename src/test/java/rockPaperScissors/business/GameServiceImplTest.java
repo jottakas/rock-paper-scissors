@@ -5,21 +5,24 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -66,17 +69,6 @@ public class GameServiceImplTest {
     @Mock
     private DdOutcome mockDdOutcome;
 
-    // @Bean
-    // public GameService gameService() {
-    // return new GameServiceImpl(handShapeRepository, matchRepository,
-    // roundOutcomeRepository,
-    // ddFightRoundResultRepository);
-    // }
-
-    @BeforeEach
-    void setup() {
-    }
-
     private List<HandShape> createHandShapeEntities() {
         final HandShape rock = createHandShapeEntity(Constants.HandShapes.ROCK);
         final HandShape paper = createHandShapeEntity(Constants.HandShapes.PAPER);
@@ -113,46 +105,80 @@ public class GameServiceImplTest {
         assertThat(result).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> fightRoundParams() {
-        return Stream.of(
-                arguments(Constants.HandShapes.ROCK, Constants.HandShapes.SCISSORS, Constants.Outcome.VICTORY),
-                arguments(Constants.HandShapes.ROCK, Constants.HandShapes.PAPER, Constants.Outcome.LOSS),
-                arguments(Constants.HandShapes.ROCK, Constants.HandShapes.ROCK, Constants.Outcome.TIE),
+    @Nested
+    class Fight_Rounds {
 
-                arguments(Constants.HandShapes.PAPER, Constants.HandShapes.ROCK, Constants.Outcome.VICTORY),
-                arguments(Constants.HandShapes.PAPER, Constants.HandShapes.SCISSORS, Constants.Outcome.LOSS),
-                arguments(Constants.HandShapes.PAPER, Constants.HandShapes.PAPER, Constants.Outcome.TIE),
+        private static Stream<Arguments> fightRoundParams() {
+            return Stream.of(
+                    arguments(Constants.HandShapes.ROCK, Constants.HandShapes.SCISSORS, Constants.Outcome.VICTORY),
+                    arguments(Constants.HandShapes.ROCK, Constants.HandShapes.PAPER, Constants.Outcome.LOSS),
+                    arguments(Constants.HandShapes.ROCK, Constants.HandShapes.ROCK, Constants.Outcome.TIE),
 
-                arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.PAPER, Constants.Outcome.VICTORY),
-                arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.ROCK, Constants.Outcome.LOSS),
-                arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.SCISSORS, Constants.Outcome.TIE));
-    }
+                    arguments(Constants.HandShapes.PAPER, Constants.HandShapes.ROCK, Constants.Outcome.VICTORY),
+                    arguments(Constants.HandShapes.PAPER, Constants.HandShapes.SCISSORS, Constants.Outcome.LOSS),
+                    arguments(Constants.HandShapes.PAPER, Constants.HandShapes.PAPER, Constants.Outcome.TIE),
 
-    @ParameterizedTest
-    @MethodSource("fightRoundParams")
-    void Fight_Rounds_Outcomes(String userShapeId, String cpuShapeId, String ddOutcomeId) throws Exception {
-        final long mockMatchId = 1L;
-
-        try (MockedStatic<Utils> utils = Mockito.mockStatic(Utils.class)) {
-            utils.when(() -> Utils.getRandom(anyInt(), anyInt()))
-                    .thenReturn(Integer.valueOf(cpuShapeId));
+                    arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.PAPER, Constants.Outcome.VICTORY),
+                    arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.ROCK, Constants.Outcome.LOSS),
+                    arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.SCISSORS, Constants.Outcome.TIE));
         }
 
-        Mockito.when(mockMatch.getFightRoundResult().size())
-                .thenReturn(1);
+        private void setupMocks(String userShapeId, String cpuShapeId, String ddOutcomeId) {
+            try (MockedStatic<Utils> utils = Mockito.mockStatic(Utils.class)) {
+                utils.when(() -> Utils.getRandom(anyInt(), anyInt()))
+                        .thenReturn(Integer.valueOf(cpuShapeId));
+            }
 
-        // Mock Repositories
-        Mockito.when(ddFightRoundResultRepository.findById(anyString()))
-                .thenReturn(Optional.of(mockDdOutcome));
-        Mockito.when(handShapeRepository.findById(anyString()))
-                .thenReturn(Optional.of(createHandShapeEntity(cpuShapeId)));
-        Mockito.when(matchRepository.findById(anyLong()))
-                .thenReturn(Optional.of(mockMatch));
+            Mockito.when(mockMatch.getFightRoundResult().size())
+                    .thenReturn(1);
 
-        // Act
-        RoundOutcomeDto result = gameServiceImpl.fightRound(mockMatchId, userShapeId);
+            // Mock Repositories
+            Mockito.when(ddFightRoundResultRepository.findById(anyString()))
+                    .thenReturn(Optional.of(mockDdOutcome));
+            Mockito.when(handShapeRepository.findById(anyString()))
+                    .thenReturn(Optional.of(createHandShapeEntity(cpuShapeId)));
+            Mockito.when(matchRepository.findById(anyLong()))
+                    .thenReturn(Optional.of(mockMatch));
+        }
 
-        // Assert
-        assertThat(result.getResultDto().getId()).isEqualTo(ddOutcomeId);
+        @ParameterizedTest
+        @MethodSource("fightRoundParams")
+        void Fight_Rounds_Check_Outcomes(String userShapeId, String cpuShapeId, String ddOutcomeId) throws Exception {
+            final long mockMatchId = 1L;
+            setupMocks(userShapeId, cpuShapeId, ddOutcomeId);
+
+            // Act
+            RoundOutcomeDto result = gameServiceImpl.fightRound(mockMatchId, userShapeId);
+
+            // Assert
+            assertThat(result.getResultDto().getId()).isEqualTo(ddOutcomeId);
+        }
+
+        @Test
+        void Fight_Rounds_Saves_the_Metrics() throws Exception {
+            final String userShapeId = Constants.HandShapes.ROCK;
+            final String cpuShapeId = Constants.HandShapes.PAPER;
+            final String ddOutcomeId = Constants.Outcome.LOSS;
+
+            final long mockMatchId = 1L;
+            setupMocks(userShapeId, cpuShapeId, ddOutcomeId);
+
+            // Act
+            gameServiceImpl.fightRound(mockMatchId, userShapeId);
+
+            // Assert
+            RoundOutcome expected = new RoundOutcome();
+            expected.setUserHandShapeId(userShapeId);
+            expected.setCpuHandShapeId(cpuShapeId);
+
+            expected.setDdOutcome(mockDdOutcome);
+            expected.setMatch(mockMatch);
+
+            // Current round number is 1. After the fight, the new round is two
+            expected.setRoundNumber(2);
+
+            verify(roundOutcomeRepository, times(1))
+                    .save(ArgumentMatchers.refEq(expected, "id", "date"));
+        }
     }
 }

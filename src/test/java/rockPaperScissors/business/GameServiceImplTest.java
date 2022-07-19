@@ -1,7 +1,7 @@
 package rockPaperScissors.business;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -11,10 +11,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -53,7 +57,7 @@ public class GameServiceImplTest {
     @InjectMocks
     private GameServiceImpl gameServiceImpl;
 
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Match mockMatch;
 
     @Mock
@@ -109,30 +113,46 @@ public class GameServiceImplTest {
         assertThat(result).isEqualTo(expected);
     }
 
-    @Test
-    void Rock_Vs_Rock_Is_Tie() throws Exception {
+    private static Stream<Arguments> fightRoundParams() {
+        return Stream.of(
+                arguments(Constants.HandShapes.ROCK, Constants.HandShapes.SCISSORS, Constants.Outcome.VICTORY),
+                arguments(Constants.HandShapes.ROCK, Constants.HandShapes.PAPER, Constants.Outcome.LOSS),
+                arguments(Constants.HandShapes.ROCK, Constants.HandShapes.ROCK, Constants.Outcome.TIE),
+
+                arguments(Constants.HandShapes.PAPER, Constants.HandShapes.ROCK, Constants.Outcome.VICTORY),
+                arguments(Constants.HandShapes.PAPER, Constants.HandShapes.SCISSORS, Constants.Outcome.LOSS),
+                arguments(Constants.HandShapes.PAPER, Constants.HandShapes.PAPER, Constants.Outcome.TIE),
+
+                arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.PAPER, Constants.Outcome.VICTORY),
+                arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.ROCK, Constants.Outcome.LOSS),
+                arguments(Constants.HandShapes.SCISSORS, Constants.HandShapes.SCISSORS, Constants.Outcome.TIE));
+    }
+
+    @ParameterizedTest
+    @MethodSource("fightRoundParams")
+    void Fight_Rounds_Outcomes(String userShapeId, String cpuShapeId, String ddOutcomeId) throws Exception {
         final long mockMatchId = 1L;
-        final String mockUserShapeId = Constants.HandShapes.ROCK;
-        final String mockCpuShapeId = Constants.HandShapes.ROCK;
 
         try (MockedStatic<Utils> utils = Mockito.mockStatic(Utils.class)) {
             utils.when(() -> Utils.getRandom(anyInt(), anyInt()))
-                    .thenReturn(Integer.valueOf(mockCpuShapeId));
+                    .thenReturn(Integer.valueOf(cpuShapeId));
         }
 
-        Mockito.when(ddFightRoundResultRepository.findById(Constants.Outcome.TIE))
+        Mockito.when(mockMatch.getFightRoundResult().size())
+                .thenReturn(1);
+
+        // Mock Repositories
+        Mockito.when(ddFightRoundResultRepository.findById(anyString()))
                 .thenReturn(Optional.of(mockDdOutcome));
-
         Mockito.when(handShapeRepository.findById(anyString()))
-                .thenReturn(Optional.of(createHandShapeEntity(mockCpuShapeId)));
-
-        Mockito.when(mockMatch.getFightRoundResult())
-                .thenReturn(new HashSet<RoundOutcome>(Arrays.asList(mockRoundOutcome)));
+                .thenReturn(Optional.of(createHandShapeEntity(cpuShapeId)));
         Mockito.when(matchRepository.findById(anyLong()))
                 .thenReturn(Optional.of(mockMatch));
 
-        RoundOutcomeDto result = gameServiceImpl.fightRound(mockMatchId, mockUserShapeId);
+        // Act
+        RoundOutcomeDto result = gameServiceImpl.fightRound(mockMatchId, userShapeId);
 
-        assertThat(result.getResultDto().getId()).isEqualTo(Constants.Outcome.TIE);
+        // Assert
+        assertThat(result.getResultDto().getId()).isEqualTo(ddOutcomeId);
     }
 }

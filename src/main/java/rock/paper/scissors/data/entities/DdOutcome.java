@@ -23,7 +23,7 @@ public class DdOutcome {
     this.name = name;
   }
 
-  @OneToMany(mappedBy = "ddRoundOutcome")
+  @OneToMany(mappedBy = "ddOutcome")
   private Set<RoundOutcome> roundOutcomes;
 
   public String getId() {
